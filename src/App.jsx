@@ -14,6 +14,9 @@ import AdminUsers from "./pages/Admin/Users";
 import AdminPlans from "./pages/Admin/Plans";
 import AdminOffers from "./pages/Admin/Offers";
 import AdminComplaints from "./pages/Admin/Complaints";
+import Profile from "./pages/User/Profile";
+import Speedtest from "./pages/User/Speedtest";
+import Notification from "./pages/User/Notification";
 
 function App() {
   return (
@@ -27,6 +30,10 @@ function App() {
             <Route path="/user/offers" element={<UserOffers />} />
             <Route path="/user/complaints" element={<UserComplaints />} />
             <Route path="/user/wallet" element={<Wallet />} />
+            <Route path="/user/profile" element={<Profile />} />
+            <Route path="/user/speedtest" element={<Speedtest />} />
+            <Route path="/user/notifications" element={<Notification />} />
+
             {/* Admin Pages */}
             <Route path="/admin/dashboard" element={<Dashboard />} />
             <Route path="/admin/users" element={<AdminUsers />} />
