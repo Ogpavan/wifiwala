@@ -16,10 +16,9 @@ import {
 import { useNavigate } from "react-router-dom";
 
 export default function Home() {
-  const navigate = useNavigate();
   // Dummy data
   const walletBalance = 1250;
-  const userName = "Jatin";
+  const userName = "Pawan";
 
   const offers = [
     {
@@ -91,6 +90,8 @@ export default function Home() {
     date: "28 Sep 2025",
   };
 
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen pb-24">
       {/* Header */}
@@ -122,7 +123,7 @@ export default function Home() {
             </div>
           </div>
           <button
-            onClick={navigate("/user/notifications")}
+            onClick={() => navigate("/user/notifications")}
             className="relative p-3 rounded-full"
             style={{
               backgroundColor: "var(--color-card-bg)",
