@@ -1,6 +1,11 @@
 import React from "react";
 
 export default function Profile() {
+  const handleLogout = () => {
+    // Clear user session (this is just a placeholder, implement actual logic)
+    localStorage.removeItem("userToken");
+    window.location.href = "/signin"; // Redirect to signin page
+  };
   // Dummy user data
   const user = {
     name: "Pawan Pal",
@@ -138,7 +143,10 @@ export default function Profile() {
             <button className="w-full py-2 rounded-xl font-semibold text-[var(--color-purple)] border border-[var(--color-purple)] hover:bg-[var(--color-purple)] hover:text-white transition">
               Edit Profile
             </button>
-            <button className="w-full py-2 rounded-xl font-semibold text-[var(--color-error)] border border-[var(--color-error)] hover:bg-[var(--color-error)] hover:text-white transition">
+            <button
+              onClick={handleLogout}
+              className="w-full py-2 rounded-xl font-semibold text-[var(--color-error)] border border-[var(--color-error)] hover:bg-[var(--color-error)] hover:text-white transition"
+            >
               Logout
             </button>
           </div>
