@@ -62,7 +62,7 @@ function AppRoutes() {
               <Route path="/signin" element={<Signin />} />
               <Route path="/signup" element={<Signup />} />
 
-              {/* User Pages */}
+              {/* User Pages (all protected) */}
               <Route
                 path="/"
                 element={
@@ -71,16 +71,72 @@ function AppRoutes() {
                   </ProtectedRoute>
                 }
               />
-              <Route path="/user/plans" element={<UserPlans />} />
-              <Route path="/user/offers" element={<UserOffers />} />
-              <Route path="/user/complaints" element={<UserComplaints />} />
-              <Route path="/user/wallet" element={<Wallet />} />
-              <Route path="/user/profile" element={<Profile />} />
-              <Route path="/user/speedtest" element={<Speedtest />} />
-              <Route path="/user/notifications" element={<Notification />} />
+              <Route
+                path="/user/plans"
+                element={
+                  <ProtectedRoute>
+                    <UserPlans />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/user/offers"
+                element={
+                  <ProtectedRoute>
+                    <UserOffers />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/user/complaints"
+                element={
+                  <ProtectedRoute>
+                    <UserComplaints />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/user/wallet"
+                element={
+                  <ProtectedRoute>
+                    <Wallet />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/user/profile"
+                element={
+                  <ProtectedRoute>
+                    <Profile />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/user/speedtest"
+                element={
+                  <ProtectedRoute>
+                    <Speedtest />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/user/notifications"
+                element={
+                  <ProtectedRoute>
+                    <Notification />
+                  </ProtectedRoute>
+                }
+              />
 
-              {/* Admin Pages */}
-              <Route path="/admin/dashboard" element={<Dashboard />} />
+              {/* Admin Pages (if you want to protect them too) */}
+              <Route
+                path="/admin/dashboard"
+                element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                }
+              />
               <Route path="/admin/users" element={<AdminUsers />} />
               <Route path="/admin/plans" element={<AdminPlans />} />
               <Route path="/admin/offers" element={<AdminOffers />} />

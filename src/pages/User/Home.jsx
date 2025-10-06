@@ -164,28 +164,11 @@ export default function Home() {
         </div>
 
         {/* Wallet Balance */}
-        <div
-          className="p-5 rounded-2xl mb-6 flex items-center justify-between"
-          style={{
-            background:
-              "linear-gradient(135deg, var(--color-purple), var(--color-indigo))",
-          }}
-        >
-          <div>
-            <p className="text-white/80 text-sm mb-1">Wallet Balance</p>
-            <h2 className="text-white text-2xl font-bold">
-              ₹{walletBalance.toLocaleString()}
-            </h2>
-          </div>
-          <div className="p-3 bg-white/20 rounded-full">
-            <FontAwesomeIcon icon={faWallet} className="text-white text-xl" />
-          </div>
-        </div>
       </div>
 
       {/* Banner/Offers Slider */}
       <div className="  mb-6">
-        <div className="flex space-x-4 overflow-x-auto pb-2 scrollbar-hide">
+        <div className="flex space-x-4 overflow-x-auto pb-2 scrollbar-hide ">
           {offers.map((offer) => (
             <div
               key={offer.id}

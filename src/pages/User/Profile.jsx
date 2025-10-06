@@ -1,11 +1,22 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
+import { auth } from "../../firebase";
 
 export default function Profile() {
-  const handleLogout = () => {
-    // Clear user session (this is just a placeholder, implement actual logic)
-    localStorage.removeItem("userToken");
-    window.location.href = "/signin"; // Redirect to signin page
+  const navigate = useNavigate();
+  const { signout } = useAuth();
+
+  const handleLogout = async () => {
+    try {
+      await auth.signOut(); // Firebase sign out
+    } catch (e) {
+      // Optionally handle error
+    }
+    signout(); // Clear context and localStorage
+    navigate("/signin");
   };
+
   // Dummy user data
   const user = {
     name: "Pawan Pal",
