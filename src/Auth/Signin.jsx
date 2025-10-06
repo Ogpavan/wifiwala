@@ -213,25 +213,20 @@ export default function Signin() {
         open: true,
         title: "Password Reset",
         message: "Your password has been reset. Please sign in.",
-        actions: [
-          {
-            label: "Sign In",
-            variant: "primary",
-            onClick: () => {
-              setPopup((prev) => ({ ...prev, open: false }));
-              setForgotStep(0);
-              setForm({ mobile: forgotMobile, password: "" }); // Pre-fill mobile
-              setForgotMobile("");
-              setForgotOtp("");
-              setForgotPassword("");
-              setForgotConfirmPassword("");
-              setTimeout(() => {
-                document.querySelector('input[name="password"]')?.focus();
-              }, 100);
-            },
-          },
-        ],
+        actions: null, // No buttons
       });
+      setTimeout(() => {
+        setPopup((prev) => ({ ...prev, open: false }));
+        setForgotStep(0);
+        setForm({ mobile: forgotMobile, password: "" });
+        setForgotMobile("");
+        setForgotOtp("");
+        setForgotPassword("");
+        setForgotConfirmPassword("");
+        setTimeout(() => {
+          document.querySelector('input[name="password"]')?.focus();
+        }, 100);
+      }, 2000); // 2 seconds;
     } catch (err) {
       setForgotError("Failed to reset password. Try again.");
     } finally {
