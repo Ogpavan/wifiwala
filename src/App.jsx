@@ -63,80 +63,17 @@ function AppRoutes() {
               <Route path="/signup" element={<Signup />} />
 
               {/* User Pages (all protected) */}
-              <Route
-                path="/"
-                element={
-                  <ProtectedRoute>
-                    <Home />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/user/plans"
-                element={
-                  <ProtectedRoute>
-                    <UserPlans />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/user/offers"
-                element={
-                  <ProtectedRoute>
-                    <UserOffers />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/user/complaints"
-                element={
-                  <ProtectedRoute>
-                    <UserComplaints />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/user/wallet"
-                element={
-                  <ProtectedRoute>
-                    <Wallet />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/user/profile"
-                element={
-                  <ProtectedRoute>
-                    <Profile />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/user/speedtest"
-                element={
-                  <ProtectedRoute>
-                    <Speedtest />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/user/notifications"
-                element={
-                  <ProtectedRoute>
-                    <Notification />
-                  </ProtectedRoute>
-                }
-              />
+              <Route path="/" element={<Home />} />
+              <Route path="/user/plans" element={<UserPlans />} />
+              <Route path="/user/offers" element={<UserOffers />} />
+              <Route path="/user/complaints" element={<UserComplaints />} />
+              <Route path="/user/wallet" element={<Wallet />} />
+              <Route path="/user/profile" element={<Profile />} />
+              <Route path="/user/speedtest" element={<Speedtest />} />
+              <Route path="/user/notifications" element={<Notification />} />
 
               {/* Admin Pages (if you want to protect them too) */}
-              <Route
-                path="/admin/dashboard"
-                element={
-                  <ProtectedRoute>
-                    <Dashboard />
-                  </ProtectedRoute>
-                }
-              />
+              <Route path="/admin/dashboard" element={<Dashboard />} />
               <Route path="/admin/users" element={<AdminUsers />} />
               <Route path="/admin/plans" element={<AdminPlans />} />
               <Route path="/admin/offers" element={<AdminOffers />} />

@@ -1,483 +1,252 @@
-import React, { useState, useRef } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Smartphone, Lock, Eye, EyeOff } from "lucide-react";
-import { useAuth } from "../context/AuthContext";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
-import {
-  db,
-  auth,
-  RecaptchaVerifier,
-  signInWithPhoneNumber,
-} from "../firebase";
-import Popup from "../components/Popup";
 
-export default function Signin() {
-  const [form, setForm] = useState({ mobile: "", password: "" });
+export default function MobileSignIn() {
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [error, setError] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [popup, setPopup] = useState({
-    open: false,
-    title: "",
-    message: "",
-    actions: null,
-  });
-
-  // Forgot password states
-  const [forgotStep, setForgotStep] = useState(0); // 0: hidden, 1: enter mobile, 2: enter OTP, 3: set new password
-  const [forgotMobile, setForgotMobile] = useState("");
-  const [forgotOtp, setForgotOtp] = useState("");
-  const [forgotPassword, setForgotPassword] = useState("");
-  const [forgotConfirmPassword, setForgotConfirmPassword] = useState("");
-  const [forgotError, setForgotError] = useState("");
-  const [forgotLoading, setForgotLoading] = useState(false);
-  const [confirmation, setConfirmation] = useState(null);
-  const otpRefs = Array.from({ length: 6 }, () => useRef(null));
+  const [isValid, setIsValid] = useState(false);
 
   const navigate = useNavigate();
-  const { signin } = useAuth();
+  // Indian mobile number validation
+  const validateIndianMobile = (number) => {
+    // Remove any non-digit characters
+    const cleanNumber = number.replace(/\D/g, "");
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    if (name === "mobile") {
-      const numbersOnly = value.replace(/\D/g, "").slice(0, 10);
-      setForm({ ...form, [name]: numbersOnly });
-    } else {
-      setForm({ ...form, [name]: value });
-    }
+    // Check if it's exactly 10 digits and starts with valid prefixes
+    const indianMobileRegex = /^[6-9]\d{9}$/;
+    return indianMobileRegex.test(cleanNumber);
   };
 
-  const validate = () => {
-    if (!form.mobile) {
-      setError("Mobile number is required");
-      return false;
-    }
-    if (form.mobile.length !== 10) {
-      setError("Mobile number must be 10 digits");
-      return false;
-    }
-    if (!form.password) {
-      setError("Password is required");
-      return false;
-    }
-    if (form.password.length < 6) {
-      setError("Password must be at least 6 characters long");
-      return false;
-    }
-    return true;
-  };
+  const handlePhoneChange = (e) => {
+    let value = e.target.value;
 
-  const handleSignin = async (e) => {
-    e.preventDefault();
-    setError("");
-    if (!validate()) return;
-    setLoading(true);
+    // Remove any non-digit characters
+    value = value.replace(/\D/g, "");
 
-    try {
-      const userDoc = await getDoc(doc(db, "users", form.mobile));
-      if (!userDoc.exists()) {
-        setPopup({
-          open: true,
-          title: "Account Not Found",
-          message: "No account found with this mobile number. Please sign up.",
-          actions: [
-            {
-              label: "Sign Up",
-              variant: "primary",
-              onClick: () => {
-                setPopup((prev) => ({ ...prev, open: false }));
-                navigate("/signup");
-              },
-            },
-            {
-              label: "Close",
-              variant: "secondary",
-              onClick: () => setPopup((prev) => ({ ...prev, open: false })),
-            },
-          ],
-        });
-        setLoading(false);
-        return;
+    // Limit to 10 digits
+    if (value.length > 10) {
+      value = value.slice(0, 10);
+    }
+
+    setPhoneNumber(value);
+
+    // Clear previous error when user starts typing
+    if (error) {
+      setError("");
+    }
+
+    // Validate the number
+    if (value.length === 0) {
+      setIsValid(false);
+      setError("");
+    } else if (value.length < 10) {
+      setIsValid(false);
+      setError("");
+    } else if (value.length === 10) {
+      const valid = validateIndianMobile(value);
+      setIsValid(valid);
+      if (!valid) {
+        setError("Please enter a valid Indian mobile number");
       }
-      const userData = userDoc.data();
-      if (userData.password && userData.password === form.password) {
-        signin(userData);
-        navigate("/");
-      } else {
-        setError("Incorrect password. Please try again.");
-      }
-    } catch (err) {
-      setError("Failed to sign in. Please try again.");
-    } finally {
-      setLoading(false);
     }
   };
 
-  // --- Forgot Password Logic ---
-
-  // Step 1: Send OTP
-  const handleForgotSendOtp = async (e) => {
+  const handleLogin = (e) => {
     e.preventDefault();
-    setForgotError("");
-    if (!forgotMobile || forgotMobile.length !== 10) {
-      setForgotError("Enter a valid 10-digit mobile number.");
+
+    // Final validation before login
+    if (!phoneNumber) {
+      setError("Phone number is required");
       return;
     }
-    setForgotLoading(true);
-    try {
-      const userDoc = await getDoc(doc(db, "users", forgotMobile));
-      if (!userDoc.exists()) {
-        setForgotError("No account found with this mobile number.");
-        setForgotLoading(false);
-        return;
-      }
-      if (!window.recaptchaVerifier) {
-        window.recaptchaVerifier = new RecaptchaVerifier(
-          auth,
-          "recaptcha-container",
-          { size: "invisible" }
-        );
-      }
-      const appVerifier = window.recaptchaVerifier;
-      const confirmationResult = await signInWithPhoneNumber(
-        auth,
-        "+91" + forgotMobile,
-        appVerifier
+
+    if (phoneNumber.length !== 10) {
+      setError("Phone number must be 10 digits");
+      return;
+    }
+
+    if (!validateIndianMobile(phoneNumber)) {
+      setError(
+        "Please enter a valid Indian mobile number (should start with 6, 7, 8, or 9)"
       );
-      setConfirmation(confirmationResult);
-      setForgotStep(2);
-    } catch (err) {
-      setForgotError("Failed to send OTP. Try again.");
-    } finally {
-      setForgotLoading(false);
-    }
-  };
-
-  // Step 2: OTP Input
-  const handleForgotOtpChange = (e, idx) => {
-    const val = e.target.value.replace(/\D/g, "").slice(0, 1);
-    let otpArr = forgotOtp.padEnd(6, " ").split("");
-    otpArr[idx] = val;
-    const newOtp = otpArr.join("").trim();
-    setForgotOtp(newOtp);
-
-    if (val && idx < 5) otpRefs[idx + 1].current.focus();
-    if (!val && idx > 0) otpRefs[idx - 1].current.focus();
-  };
-  const handleForgotOtpKeyDown = (e, idx) => {
-    if (e.key === "Backspace" && !forgotOtp[idx] && idx > 0) {
-      otpRefs[idx - 1].current.focus();
-    }
-  };
-
-  // Step 2: Verify OTP
-  const handleForgotVerifyOtp = async (e) => {
-    e.preventDefault();
-    setForgotError("");
-    if (!confirmation) {
-      setForgotError("Please request OTP again.");
       return;
     }
-    setForgotLoading(true);
-    try {
-      await confirmation.confirm(forgotOtp);
-      setForgotStep(3);
-    } catch (err) {
-      setForgotError("Invalid OTP. Please try again.");
-    } finally {
-      setForgotLoading(false);
-    }
+
+    // Clear any errors
+    setError("");
+    console.log("Phone number:", phoneNumber);
+
+    // Here you would typically make an API call
+    navigate("/");
   };
 
-  // Step 3: Set New Password
-  const handleForgotSetPassword = async (e) => {
-    e.preventDefault();
-    console.log(forgotPassword, forgotConfirmPassword);
-    setForgotError("");
-    if (!forgotPassword || forgotPassword.length < 6) {
-      setForgotError("Password must be at least 6 characters long.");
-      console.log("here1");
-      return;
-    }
-    if (forgotPassword !== forgotConfirmPassword) {
-      setForgotError("Passwords do not match.");
-      return;
-    }
-    setForgotLoading(true);
-    try {
-      await updateDoc(doc(db, "users", forgotMobile), {
-        password: forgotPassword,
-      });
-      console.log("Password updated in Firestore");
-      setPopup({
-        open: true,
-        title: "Password Reset",
-        message: "Your password has been reset. Please sign in.",
-        actions: null, // No buttons
-      });
-      setTimeout(() => {
-        setPopup((prev) => ({ ...prev, open: false }));
-        setForgotStep(0);
-        setForm({ mobile: forgotMobile, password: "" });
-        setForgotMobile("");
-        setForgotOtp("");
-        setForgotPassword("");
-        setForgotConfirmPassword("");
-        setTimeout(() => {
-          document.querySelector('input[name="password"]')?.focus();
-        }, 100);
-      }, 2000); // 2 seconds;
-    } catch (err) {
-      setForgotError("Failed to reset password. Try again.");
-    } finally {
-      setForgotLoading(false);
-    }
+  // Format display number with spacing for better readability
+  const formatDisplayNumber = (number) => {
+    if (number.length <= 5) return number;
+    return `${number.slice(0, 5)} ${number.slice(5)}`;
   };
 
   return (
-    <div className="min-h-[100dvh] bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex items-center justify-center p-4">
-      <Popup
-        open={popup.open}
-        title={popup.title}
-        message={popup.message}
-        actions={popup.actions}
-        onClose={() => setPopup((prev) => ({ ...prev, open: false }))}
-      />
-      <div className="w-full max-w-sm">
-        <div className="text-center mb-6">
-          <h1 className="text-2xl font-bold text-gray-900 mb-1">Sign In</h1>
-          <p className="text-sm text-gray-600">
-            Welcome back! Please sign in to continue.
+    <div className="min-h-[100dvh] bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex flex-col">
+      {/* Header */}
+      <div className="text-center pt-8 pb-4">
+        <h2 className="text-lg font-bold text-blue-600">WiFiWala</h2>
+        <p className="text-xs text-gray-500 mt-1">Premium WiFi Solutions</p>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col items-center px-6">
+        {/* WiFi Illustration */}
+        <div className="">
+          <div className="relative">
+            {/* Background circle */}
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full opacity-50 blur-xl"></div>
+
+            {/* WiFi waves */}
+            <img
+              src="/main.png"
+              alt="WiFi"
+              className="relative mx-auto w-56 h-56"
+            />
+          </div>
+        </div>
+
+        {/* Welcome Text */}
+        <div className="text-center mb-8">
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">
+            Welcome back
+          </h1>
+
+          <p className="text-gray-400 text-xs max-w-xs mx-auto">
+            Access your high-speed internet plans, monitor usage, and manage
+            your account
           </p>
         </div>
-        <div className="bg-white rounded-md p-6 border border-gray-100">
-          {error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
-              <p className="text-red-600 text-xs font-medium">{error}</p>
-            </div>
-          )}
-          <form onSubmit={handleSignin} className="space-y-4">
-            <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1">
-                Mobile Number
-              </label>
-              <div className="relative">
-                <Smartphone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <input
-                  name="mobile"
-                  type="tel"
-                  value={form.mobile}
-                  onChange={handleChange}
-                  placeholder="Enter 10-digit number"
-                  maxLength="10"
-                  className="w-full pl-10 pr-3 py-2.5 bg-gray-50 border border-gray-200 rounded-md focus:bg-white focus:border-purple-400 focus:outline-none transition-all duration-200 text-sm"
-                  required
-                />
+
+        {/* Phone Number Input Form */}
+        <form onSubmit={handleLogin} className="w-full max-w-sm">
+          <div className="mb-4">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Phone Number
+            </label>
+            <div className="relative">
+              {/* Country Code */}
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <span className="text-gray-500 text-sm font-medium">+91</span>
+                <div className="ml-2 w-px h-4 bg-gray-300"></div>
               </div>
-            </div>
-            <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1">
-                Password
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <input
-                  name="password"
-                  type={showPassword ? "text" : "password"}
-                  value={form.password}
-                  onChange={handleChange}
-                  placeholder="Enter your password"
-                  className="w-full pl-10 pr-10 py-2.5 bg-gray-50 border border-gray-200 rounded-md focus:bg-white focus:border-purple-400 focus:outline-none transition-all duration-200 text-sm"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword((v) => !v)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                  tabIndex={-1}
+
+              {/* Phone Icon */}
+              <div className="absolute inset-y-0 left-14 flex items-center pointer-events-none">
+                <svg
+                  className="w-4 h-4 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
                 >
-                  {showPassword ? (
-                    <EyeOff className="w-4 h-4" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                  />
+                </svg>
+              </div>
+
+              {/* Input Field */}
+              <input
+                type="tel"
+                value={formatDisplayNumber(phoneNumber)}
+                onChange={handlePhoneChange}
+                placeholder="Enter 10-digit mobile number"
+                maxLength="11" // Accounting for the space in formatting
+                className={`w-full pl-20 pr-12 py-3 text-sm bg-white border ${
+                  error
+                    ? "border-red-300 focus:ring-red-500 focus:border-red-500"
+                    : isValid
+                    ? "border-green-300 focus:ring-green-500 focus:border-green-500"
+                    : "border-gray-200 focus:ring-blue-500 focus:border-blue-500"
+                } rounded-lg focus:outline-none focus:ring-0.8 text-gray-900 placeholder-gray-400 shadow-sm transition-all`}
+              />
+
+              {/* Validation Icon */}
+              <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                {phoneNumber.length === 10 &&
+                  (isValid ? (
+                    <svg
+                      className="w-5 h-5 text-green-500"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
                   ) : (
-                    <Eye className="w-4 h-4" />
-                  )}
-                </button>
+                    <svg
+                      className="w-5 h-5 text-red-500"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  ))}
               </div>
             </div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold rounded-md hover:from-purple-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-purple-300 transition-all duration-200 disabled:opacity-50 mt-4"
-            >
-              {loading ? "Signing In..." : "Sign In"}
-            </button>
-          </form>
-          <div className="mt-4 flex justify-between items-center">
-            <button
-              type="button"
-              className="text-xs text-purple-600 hover:underline"
-              onClick={() => setForgotStep(1)}
-            >
-              Forgot Password?
-            </button>
-            <span className="text-xs text-gray-400">|</span>
-            <button
-              type="button"
-              onClick={() => navigate("/signup")}
-              className="text-xs text-purple-600 hover:underline"
-            >
-              Sign Up
-            </button>
           </div>
+
+          {/* Login Button */}
+          <button
+            type="submit"
+            disabled={!isValid}
+            className={`w-full py-3 text-sm rounded-lg font-semibold transition-all shadow-md transform ${
+              isValid
+                ? "bg-gradient-to-r from-blue-600 to-blue-600 text-white hover:from-blue-700 hover:to-blue-700 shadow-blue-500/25 hover:shadow-lg hover:shadow-blue-500/30 hover:scale-[1.01] cursor-pointer"
+                : "bg-gray-300 text-gray-500 cursor-not-allowed shadow-gray-300/25"
+            }`}
+          >
+            {isValid ? "Access My WiFi Dashboard" : "Enter Your Phone Number"}
+          </button>
+        </form>
+
+        {/* Service Info */}
+        <div className="w-full max-w-sm mt-6 text-center">
+          <p className="text-xs text-gray-500 mb-2"></p>
         </div>
-        <p className="text-center text-xs text-gray-500 mt-4 px-2">
-          By continuing, you agree to our{" "}
-          <span className="text-purple-600">Terms</span> and{" "}
-          <span className="text-purple-600">Privacy Policy</span>
-        </p>
+
+        {/* Divider */}
+        <div className="text-center text-xs text-gray-400 pb-6 pt-4">
+          <p>Secure WiFi Connection </p>
+        </div>
+
+        {/*Privacy Policy */}
+        <div className="w-full max-w-sm mt-6 text-center">
+          <p className="text-xs text-gray-500 mb-2">
+            By signing in, you agree to our{" "}
+            <a href="#" className="text-blue-600 underline">
+              Terms of Service
+            </a>{" "}
+            and{" "}
+            <a href="#" className="text-blue-600 underline">
+              Privacy Policy
+            </a>
+            .
+          </p>
+        </div>
+        {/* Plans Preview */}
       </div>
-      {/* Forgot Password Modal */}
-      {forgotStep > 0 && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="bg-white rounded-md shadow-lg max-w-xs w-full p-6 text-center">
-            {forgotStep === 1 && (
-              <>
-                <h2 className="text-lg font-bold mb-2">Forgot Password</h2>
-                <p className="text-gray-700 mb-4">
-                  Enter your registered mobile number to receive an OTP.
-                </p>
-                <form onSubmit={handleForgotSendOtp} className="space-y-4">
-                  <input
-                    type="tel"
-                    value={forgotMobile}
-                    onChange={(e) =>
-                      setForgotMobile(
-                        e.target.value.replace(/\D/g, "").slice(0, 10)
-                      )
-                    }
-                    placeholder="Enter 10-digit mobile number"
-                    maxLength={10}
-                    className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-md focus:bg-white focus:border-purple-400 focus:outline-none transition-all duration-200 text-sm"
-                    required
-                  />
-                  {forgotError && (
-                    <div className="mb-2 p-2 bg-red-50 border border-red-200 rounded text-xs text-red-600">
-                      {forgotError}
-                    </div>
-                  )}
-                  <button
-                    type="submit"
-                    disabled={forgotLoading}
-                    className="w-full py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold rounded-md hover:from-purple-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-purple-300 transition-all duration-200 disabled:opacity-50"
-                  >
-                    {forgotLoading ? "Sending OTP..." : "Send OTP"}
-                  </button>
-                  <button
-                    type="button"
-                    className="w-full mt-2 py-2 rounded bg-gray-100 text-gray-700 font-semibold hover:bg-gray-200"
-                    onClick={() => {
-                      setForgotStep(0);
-                      setForgotMobile("");
-                      setForgotOtp("");
-                      setForgotPassword("");
-                      setForgotConfirmPassword("");
-                      setForgotError("");
-                    }}
-                  >
-                    Cancel
-                  </button>
-                </form>
-              </>
-            )}
-            {forgotStep === 2 && (
-              <>
-                <h2 className="text-lg font-bold mb-2">Verify OTP</h2>
-                <p className="text-gray-700 mb-4">
-                  Enter the 6-digit OTP sent to +91 {forgotMobile}
-                </p>
-                <form onSubmit={handleForgotVerifyOtp} className="space-y-4">
-                  <div className="flex justify-between gap-2">
-                    {Array.from({ length: 6 }).map((_, idx) => (
-                      <input
-                        key={idx}
-                        ref={otpRefs[idx]}
-                        type="text"
-                        inputMode="numeric"
-                        maxLength={1}
-                        value={forgotOtp[idx] || ""}
-                        onChange={(e) => handleForgotOtpChange(e, idx)}
-                        onKeyDown={(e) => handleForgotOtpKeyDown(e, idx)}
-                        className="w-10 h-12 text-center text-xl font-bold border border-gray-300 rounded focus:outline-none focus:border-purple-500 bg-gray-50"
-                        autoFocus={idx === 0}
-                      />
-                    ))}
-                  </div>
-                  {forgotError && (
-                    <div className="mb-2 p-2 bg-red-50 border border-red-200 rounded text-xs text-red-600">
-                      {forgotError}
-                    </div>
-                  )}
-                  <button
-                    type="submit"
-                    disabled={forgotLoading}
-                    className="w-full py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold rounded-md hover:from-purple-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-purple-300 transition-all duration-200 disabled:opacity-50"
-                  >
-                    {forgotLoading ? "Verifying..." : "Verify OTP"}
-                  </button>
-                  <button
-                    type="button"
-                    className="w-full mt-2 py-2 rounded bg-gray-100 text-gray-700 font-semibold hover:bg-gray-200"
-                    onClick={() => {
-                      setForgotStep(1);
-                      setForgotOtp("");
-                      setForgotError("");
-                    }}
-                  >
-                    Back
-                  </button>
-                </form>
-              </>
-            )}
-            {forgotStep === 3 && (
-              <>
-                <h2 className="text-lg font-bold mb-2">Set New Password</h2>
-                <form onSubmit={handleForgotSetPassword} className="space-y-4">
-                  <input
-                    type="password"
-                    value={forgotPassword}
-                    onChange={(e) => setForgotPassword(e.target.value)}
-                    placeholder="New password (min 6 chars)"
-                    className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-md focus:bg-white focus:border-purple-400 focus:outline-none transition-all duration-200 text-sm"
-                    required
-                  />
-                  <input
-                    type="password"
-                    value={forgotConfirmPassword}
-                    onChange={(e) => setForgotConfirmPassword(e.target.value)}
-                    placeholder="Confirm new password"
-                    className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-md focus:bg-white focus:border-purple-400 focus:outline-none transition-all duration-200 text-sm"
-                    required
-                  />
-                  {forgotError && (
-                    <div className="mb-2 p-2 bg-red-50 border border-red-200 rounded text-xs text-red-600">
-                      {forgotError}
-                    </div>
-                  )}
-                  <button
-                    type="submit"
-                    disabled={forgotLoading}
-                    className="w-full py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold rounded-md hover:from-purple-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-purple-300 transition-all duration-200 disabled:opacity-50"
-                  >
-                    {forgotLoading ? "Saving..." : "Set Password"}
-                  </button>
-                </form>
-              </>
-            )}
-          </div>
-          {/* Recaptcha container for forgot password */}
-          <div id="recaptcha-container"></div>
-        </div>
-      )}
+
+      {/* Footer */}
     </div>
   );
 }

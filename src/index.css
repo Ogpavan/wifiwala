@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --color-purple: #7c3aed;
-  --color-indigo: #6366f1;
+  --color-purple: #2563eb;
+  --color-indigo: #2563eb;
   --color-gray: #bdbdbd;
   --color-bg-footer: #fff;
   --color-shadow-footer: 0 0 24px 0 rgba(124, 58, 237, 0.1);
@@ -20,3 +20,48 @@
   --color-cyan: #06b6d4;
   --color-orange: #f97316;
 }
+
+/* 
+
+:root {
+  --color-blue-900: #1e3a8a;
+  --color-blue-800: #1e40af;
+  --color-blue-700: #2563eb;
+  --color-blue-600: #2563eb;
+  --color-blue-500: #3b82f6;
+  --color-blue-400: #60a5fa;
+  --color-blue-300: #93c5fd;
+  --color-blue-200: #bfdbfe;
+  --color-blue-100: #dbeafe;
+  --color-blue-50: #eff6ff;
+
+  --color-indigo: #6366f1;
+  --color-gray: #bdbdbd;
+  --color-bg-footer: #fff;
+  --color-shadow-footer: 0 0 24px 0 rgba(37, 99, 235, 0.08);
+  --color-shadow-center: 0 4px 24px 0 rgba(37, 99, 235, 0.15);
+  --color-bg-light: var(--color-blue-50);
+  --color-bg-gradient: linear-gradient(180deg, var(--color-blue-50) 0%, var(--color-blue-100) 100%);
+  --color-card-bg: #ffffff;
+  --color-text-primary: #1e293b;
+  --color-text-secondary: #64748b;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --color-pink: #ec4899;
+  --color-emerald: #10b981;
+  --color-cyan: #06b6d4;
+  --color-orange: #f97316;
+
+  /* App theme overrides */
+  /* --color-primary: var(--color-blue-700);
+  --color-primary-dark: var(--color-blue-900);
+  --color-primary-light: var(--color-blue-400);
+  --color-accent: var(--color-indigo);
+  --color-bg-main: var(--color-bg-gradient);
+  --color-btn-gradient: linear-gradient(90deg, var(--color-blue-700) 0%, var(--color-blue-500) 100%);
+  --color-btn-hover: var(--color-blue-800);
+  --color-btn-active: var(--color-blue-900);
+  --color-border: var(--color-blue-200);
+  --color-shadow-btn: 0 2px 8px 0 rgba(37, 99, 235, 0.12);
+} */ */
