@@ -2,40 +2,31 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function MobileSignIn() {
+  const [name, setName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [error, setError] = useState("");
   const [isValid, setIsValid] = useState(false);
 
   const navigate = useNavigate();
+
   // Indian mobile number validation
   const validateIndianMobile = (number) => {
-    // Remove any non-digit characters
     const cleanNumber = number.replace(/\D/g, "");
-
-    // Check if it's exactly 10 digits and starts with valid prefixes
     const indianMobileRegex = /^[6-9]\d{9}$/;
     return indianMobileRegex.test(cleanNumber);
   };
 
+  const handleNameChange = (e) => {
+    setName(e.target.value);
+    if (error) setError("");
+  };
+
   const handlePhoneChange = (e) => {
-    let value = e.target.value;
-
-    // Remove any non-digit characters
-    value = value.replace(/\D/g, "");
-
-    // Limit to 10 digits
-    if (value.length > 10) {
-      value = value.slice(0, 10);
-    }
-
+    let value = e.target.value.replace(/\D/g, "");
+    if (value.length > 10) value = value.slice(0, 10);
     setPhoneNumber(value);
 
-    // Clear previous error when user starts typing
-    if (error) {
-      setError("");
-    }
-
-    // Validate the number
+    if (error) setError("");
     if (value.length === 0) {
       setIsValid(false);
       setError("");
@@ -45,42 +36,35 @@ export default function MobileSignIn() {
     } else if (value.length === 10) {
       const valid = validateIndianMobile(value);
       setIsValid(valid);
-      if (!valid) {
-        setError("Please enter a valid Indian mobile number");
-      }
+      if (!valid) setError("Please enter a valid Indian mobile number");
     }
   };
 
   const handleLogin = (e) => {
     e.preventDefault();
-
-    // Final validation before login
+    if (!name.trim()) {
+      setError("Name is required");
+      return;
+    }
     if (!phoneNumber) {
       setError("Phone number is required");
       return;
     }
-
     if (phoneNumber.length !== 10) {
       setError("Phone number must be 10 digits");
       return;
     }
-
     if (!validateIndianMobile(phoneNumber)) {
       setError(
         "Please enter a valid Indian mobile number (should start with 6, 7, 8, or 9)"
       );
       return;
     }
-
-    // Clear any errors
     setError("");
-    console.log("Phone number:", phoneNumber);
-
-    // Here you would typically make an API call
+    console.log("Name:", name, "Phone number:", phoneNumber);
     navigate("/");
   };
 
-  // Format display number with spacing for better readability
   const formatDisplayNumber = (number) => {
     if (number.length <= 5) return number;
     return `${number.slice(0, 5)} ${number.slice(5)}`;
@@ -89,6 +73,7 @@ export default function MobileSignIn() {
   return (
     <div className="min-h-[100dvh] bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex flex-col">
       {/* Header */}
+
       <div className="text-center pt-8 pb-4">
         <h2 className="text-lg font-bold text-blue-600">WiFiWala</h2>
         <p className="text-xs text-gray-500 mt-1">Premium WiFi Solutions</p>
@@ -123,8 +108,25 @@ export default function MobileSignIn() {
           </p>
         </div>
 
-        {/* Phone Number Input Form */}
+        {/* Input Form */}
         <form onSubmit={handleLogin} className="w-full max-w-sm">
+          {/* Name Input */}
+          <div className="mb-4">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Name
+            </label>
+            <input
+              type="text"
+              value={name}
+              onChange={handleNameChange}
+              placeholder="Enter your name"
+              className="w-full px-4 py-3 text-sm bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-400 shadow-sm transition-all"
+              maxLength={40}
+              required
+            />
+          </div>
+
+          {/* Phone Number Input */}
           <div className="mb-4">
             <label className="block text-sm font-semibold text-gray-700 mb-2">
               Phone Number
@@ -167,6 +169,7 @@ export default function MobileSignIn() {
                     ? "border-green-300 focus:ring-green-500 focus:border-green-500"
                     : "border-gray-200 focus:ring-blue-500 focus:border-blue-500"
                 } rounded-lg focus:outline-none focus:ring-0.8 text-gray-900 placeholder-gray-400 shadow-sm transition-all`}
+                required
               />
 
               {/* Validation Icon */}
@@ -205,17 +208,22 @@ export default function MobileSignIn() {
             </div>
           </div>
 
+          {/* Error Message */}
+          {error && <div className="mb-4 text-xs text-red-600">{error}</div>}
+
           {/* Login Button */}
           <button
             type="submit"
-            disabled={!isValid}
+            disabled={!isValid || !name.trim()}
             className={`w-full py-3 text-sm rounded-lg font-semibold transition-all shadow-md transform ${
-              isValid
+              isValid && name.trim()
                 ? "bg-gradient-to-r from-blue-600 to-blue-600 text-white hover:from-blue-700 hover:to-blue-700 shadow-blue-500/25 hover:shadow-lg hover:shadow-blue-500/30 hover:scale-[1.01] cursor-pointer"
                 : "bg-gray-300 text-gray-500 cursor-not-allowed shadow-gray-300/25"
             }`}
           >
-            {isValid ? "Access My WiFi Dashboard" : "Enter Your Phone Number"}
+            {isValid && name.trim()
+              ? "Access My WiFi Dashboard"
+              : "Enter Your Details"}
           </button>
         </form>
 
@@ -243,10 +251,7 @@ export default function MobileSignIn() {
             .
           </p>
         </div>
-        {/* Plans Preview */}
       </div>
-
-      {/* Footer */}
     </div>
   );
 }
