@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --color-purple: #2563eb;
-  --color-indigo: #2563eb;
+  --color-purple: #2158cf;
+  --color-indigo: #2158cf;
   --color-gray: #bdbdbd;
   --color-bg-footer: #fff;
   --color-shadow-footer: 0 0 24px 0 rgba(124, 58, 237, 0.1);

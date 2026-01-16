@@ -1,470 +1,271 @@
-import React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faBell,
-  faSearch,
-  faWifi,
-  faWallet,
-  faGift,
-  faTools,
-  faHistory,
-  faHeadset,
-  faArrowRight,
-  faExclamationTriangle,
-  faCheckCircle,
-} from "@fortawesome/free-solid-svg-icons";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from 'react';
+import { Wifi, Grid, X, Zap, Shield, Headphones, Clock } from 'lucide-react';
 
-export default function Home() {
-  // Dummy data
-  const walletBalance = 1250;
-  const userName = "Pawan";
+export default function WiFiWalaHomepage() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const offers = [
-    {
-      id: 1,
-      title: "20% Off First Recharge",
-      subtitle: "Valid till 30th Sept",
-      bgColor:
-        "linear-gradient(135deg, var(--color-purple), var(--color-indigo))",
-    },
-    {
-      id: 2,
-      title: "Unlimited 100Mbps for ₹499",
-      subtitle: "Limited time offer",
-      bgColor:
-        "linear-gradient(135deg, var(--color-pink), var(--color-purple))",
-    },
-    {
-      id: 3,
-      title: "Refer & Earn ₹100",
-      subtitle: "For each successful referral",
-      bgColor:
-        "linear-gradient(135deg, var(--color-emerald), var(--color-cyan))",
-    },
+  const plans = [
+    { provider: 'Airtel', speed: '100 Mbps', price: '₹699', data: 'Unlimited', router: 'Free' },
+    { provider: 'Jio Fiber', speed: '150 Mbps', price: '₹999', data: 'Unlimited', router: 'Free', highlight: true },
+    { provider: 'BSNL', speed: '50 Mbps', price: '₹499', data: 'Unlimited', router: 'Free' },
+    { provider: 'Vi Fiber', speed: '200 Mbps', price: '₹1,299', data: 'Unlimited', router: 'Free' },
   ];
-
-  const quickActions = [
-    { label: "Plans", icon: faWifi, color: "var(--color-purple)" },
-    { label: "Wallet", icon: faWallet, color: "var(--color-indigo)" },
-    { label: "Offers", icon: faGift, color: "var(--color-pink)" },
-    { label: "Complaints", icon: faTools, color: "var(--color-emerald)" },
-    { label: "History", icon: faHistory, color: "var(--color-orange)" },
-    { label: "Support", icon: faHeadset, color: "var(--color-cyan)" },
-  ];
-
-  const recommendedPlans = [
-    {
-      name: "Basic",
-      price: 199,
-      speed: "10Mbps",
-      description: "Perfect for browsing",
-    },
-    {
-      name: "Standard",
-      price: 499,
-      speed: "50Mbps",
-      description: "Great for streaming",
-    },
-    {
-      name: "Premium",
-      price: 999,
-      speed: "200Mbps",
-      description: "Ultimate speed",
-    },
-  ];
-
-  const activePlan = {
-    name: "Standard Plan",
-    speed: "50Mbps",
-    expiry: "30 Sep 2025",
-    dataUsed: 120,
-    totalData: 200,
-    isActive: true,
-  };
-
-  const openComplaint = {
-    id: "#C1234",
-    issue: "No Internet Connection",
-    status: "In Progress",
-    date: "28 Sep 2025",
-  };
-
-  const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen pb-24">
-      {/* Header */}
-      <div className="   pb-4">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center space-x-3">
-            <div
-              className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg"
-              style={{
-                background:
-                  "linear-gradient(135deg, var(--color-purple), var(--color-indigo))",
-              }}
+    <div className="min-h-screen bg-slate-950">
+      {/* Navigation */}
+      <nav className="fixed top-0 w-full bg-slate-900/90 backdrop-blur-sm border-b border-slate-800 z-50">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center gap-2">
+              <div className="w-9 h-9 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-lg flex items-center justify-center">
+                <Wifi className="w-5 h-5 text-white" />
+              </div>
+              <span className="text-xl font-semibold text-white">WiFiWala</span>
+            </div>
+            
+            <div className="hidden md:flex items-center gap-6">
+              <a href="#home" className="text-sm text-white hover:text-emerald-400 transition">Home</a>
+              <a href="#plans" className="text-sm text-slate-400 hover:text-white transition">Plans</a>
+              <a href="#contact" className="text-sm text-slate-400 hover:text-white transition">Contact</a>
+            </div>
+
+            <button 
+              className="md:hidden text-white"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
-              {userName[0]}
-            </div>
-            <div>
-              <p
-                style={{ color: "var(--color-text-secondary)" }}
-                className="text-sm"
-              >
-                Welcome back!
-              </p>
-              <h1
-                style={{ color: "var(--color-text-primary)" }}
-                className="text-xl font-bold"
-              >
-                Hi, {userName} 👋
-              </h1>
-            </div>
-          </div>
-          <button
-            onClick={() => navigate("/user/notifications")}
-            className="relative p-3 rounded-full"
-            style={{
-              backgroundColor: "var(--color-card-bg)",
-              boxShadow: "var(--color-shadow-footer)",
-            }}
-          >
-            <FontAwesomeIcon
-              icon={faBell}
-              style={{ color: "var(--color-purple)" }}
-            />
-            <span
-              className="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-xs text-white font-bold"
-              style={{ backgroundColor: "var(--color-error)" }}
-            >
-              3
-            </span>
-          </button>
-        </div>
-
-        {/* Search Bar */}
-        <div
-          className="flex items-center p-4 rounded-xl mb-4"
-          style={{
-            backgroundColor: "var(--color-card-bg)",
-            boxShadow: "var(--color-shadow-footer)",
-          }}
-        >
-          <FontAwesomeIcon
-            icon={faSearch}
-            style={{ color: "var(--color-gray)" }}
-            className="mr-3"
-          />
-          <input
-            className="flex-1 outline-none bg-transparent text-sm"
-            placeholder="Search for WiFi plans or vendors nearby"
-            style={{ color: "var(--color-text-primary)" }}
-          />
-        </div>
-
-        {/* Wallet Balance */}
-      </div>
-
-      {/* Banner/Offers Slider */}
-      <div className="  mb-6">
-        <div className="flex space-x-4 overflow-x-auto pb-2 scrollbar-hide ">
-          {offers.map((offer) => (
-            <div
-              key={offer.id}
-              className="min-w-[280px] p-5 rounded-2xl flex items-center justify-between"
-              style={{ background: offer.bgColor }}
-            >
-              <div>
-                <h3 className="text-white font-bold text-lg mb-1">
-                  {offer.title}
-                </h3>
-                <p className="text-white/80 text-sm">{offer.subtitle}</p>
-              </div>
-              <button className="p-2 bg-white/20 rounded-full">
-                <FontAwesomeIcon icon={faArrowRight} className="text-white" />
-              </button>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Quick Actions */}
-      <div className="  mb-6">
-        <h3
-          style={{ color: "var(--color-text-primary)" }}
-          className="text-lg font-bold mb-4"
-        >
-          Quick Actions
-        </h3>
-        <div className="grid grid-cols-3 gap-4">
-          {quickActions.map((action, index) => (
-            <button
-              key={action.label}
-              className="flex flex-col items-center p-4 rounded-2xl transition-transform hover:scale-105"
-              style={{
-                backgroundColor: "var(--color-card-bg)",
-                boxShadow: "var(--color-shadow-footer)",
-              }}
-            >
-              <div
-                className="w-12 h-12 rounded-2xl flex items-center justify-center mb-3"
-                style={{ backgroundColor: `${action.color}15` }}
-              >
-                <FontAwesomeIcon
-                  icon={action.icon}
-                  style={{ color: action.color }}
-                  className="text-xl"
-                />
-              </div>
-              <span
-                style={{ color: "var(--color-text-primary)" }}
-                className="text-sm font-medium"
-              >
-                {action.label}
-              </span>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Active Plan */}
-      {activePlan.isActive && (
-        <div className="  mb-6">
-          <h3
-            style={{ color: "var(--color-text-primary)" }}
-            className="text-lg font-bold mb-4"
-          >
-            Your Active Plan
-          </h3>
-          <div
-            className="p-5 rounded-2xl"
-            style={{
-              backgroundColor: "var(--color-card-bg)",
-              boxShadow: "var(--color-shadow-footer)",
-              background:
-                "linear-gradient(135deg, var(--color-emerald), var(--color-cyan))",
-            }}
-          >
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h4 className="text-white font-bold text-lg">
-                  {activePlan.name}
-                </h4>
-                <p className="text-white/80">{activePlan.speed}</p>
-              </div>
-              <div className="text-right">
-                <p className="text-white/80 text-sm">Valid till</p>
-                <p className="text-white font-semibold">{activePlan.expiry}</p>
-              </div>
-            </div>
-            <div className="mb-4">
-              <div className="flex justify-between text-white/80 text-sm mb-2">
-                <span>Data Used</span>
-                <span>
-                  {activePlan.dataUsed}GB / {activePlan.totalData}GB
-                </span>
-              </div>
-              <div className="w-full bg-white/30 rounded-full h-2">
-                <div
-                  className="bg-white h-2 rounded-full transition-all"
-                  style={{
-                    width: `${
-                      (activePlan.dataUsed / activePlan.totalData) * 100
-                    }%`,
-                  }}
-                ></div>
-              </div>
-            </div>
-            <button className="w-full bg-white text-emerald-600 font-bold py-3 rounded-xl">
-              Renew / Upgrade
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Grid className="w-5 h-5" />}
             </button>
           </div>
         </div>
-      )}
 
-      {/* Recommended Plans */}
-      <div className="  mb-6">
-        <div className="flex items-center justify-between mb-4">
-          <h3
-            style={{ color: "var(--color-text-primary)" }}
-            className="text-lg font-bold"
-          >
-            Recommended Plans
-          </h3>
-          <button
-            style={{ color: "var(--color-purple)" }}
-            className="text-sm font-semibold"
-          >
-            View All Plans
-          </button>
-        </div>
-        <div className="grid grid-cols-1 gap-4">
-          {recommendedPlans.map((plan, index) => (
-            <div
-              key={plan.name}
-              className="p-4 rounded-2xl flex items-center justify-between"
-              style={{
-                backgroundColor: "var(--color-card-bg)",
-                boxShadow: "var(--color-shadow-footer)",
-              }}
-            >
-              <div>
-                <h4
-                  style={{ color: "var(--color-text-primary)" }}
-                  className="font-bold text-lg"
-                >
-                  {plan.name}
-                </h4>
-                <p
-                  style={{ color: "var(--color-text-secondary)" }}
-                  className="text-sm mb-1"
-                >
-                  {plan.speed} • {plan.description}
-                </p>
-                <p
-                  style={{ color: "var(--color-purple)" }}
-                  className="text-xl font-bold"
-                >
-                  ₹{plan.price}/month
-                </p>
-              </div>
-              <button
-                className="px-6 py-2 rounded-xl text-white font-semibold"
-                style={{ backgroundColor: "var(--color-purple)" }}
-              >
-                Choose
-              </button>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Support/Complaints */}
-      <div className="  mb-6">
-        <h3
-          style={{ color: "var(--color-text-primary)" }}
-          className="text-lg font-bold mb-4"
-        >
-          Support & Help
-        </h3>
-
-        {/* Open Complaint Alert */}
-        {openComplaint && (
-          <div
-            className="p-4 rounded-2xl mb-4 border-l-4"
-            style={{
-              backgroundColor: "var(--color-card-bg)",
-              borderLeftColor: "var(--color-warning)",
-              boxShadow: "var(--color-shadow-footer)",
-            }}
-          >
-            <div className="flex items-start justify-between">
-              <div className="flex items-start space-x-3">
-                <FontAwesomeIcon
-                  icon={faExclamationTriangle}
-                  style={{ color: "var(--color-warning)" }}
-                />
-                <div>
-                  <h4
-                    style={{ color: "var(--color-text-primary)" }}
-                    className="font-semibold"
-                  >
-                    {openComplaint.issue}
-                  </h4>
-                  <p
-                    style={{ color: "var(--color-text-secondary)" }}
-                    className="text-sm"
-                  >
-                    Status: {openComplaint.status} • {openComplaint.date}
-                  </p>
-                </div>
-              </div>
-              <span
-                style={{ color: "var(--color-text-secondary)" }}
-                className="text-xs"
-              >
-                {openComplaint.id}
-              </span>
+        {mobileMenuOpen && (
+          <div className="md:hidden bg-slate-900 border-t border-slate-800">
+            <div className="px-4 py-4 space-y-2">
+              <a href="#home" className="block text-sm text-white py-2" onClick={() => setMobileMenuOpen(false)}>Home</a>
+              <a href="#plans" className="block text-sm text-slate-400 py-2" onClick={() => setMobileMenuOpen(false)}>Plans</a>
+              <a href="#contact" className="block text-sm text-slate-400 py-2" onClick={() => setMobileMenuOpen(false)}>Contact</a>
             </div>
           </div>
         )}
+      </nav>
 
-        {/* Support Actions */}
-        <div className="grid grid-cols-2 gap-4">
-          <button
-            className="p-4 rounded-2xl flex items-center space-x-3"
-            style={{
-              backgroundColor: "var(--color-card-bg)",
-              boxShadow: "var(--color-shadow-footer)",
-            }}
-          >
-            <div
-              className="w-12 h-12 rounded-2xl flex items-center justify-center"
-              style={{
-                backgroundColor: `${getComputedStyle(
-                  document.documentElement
-                ).getPropertyValue("--color-error")}15`,
-              }}
-            >
-              <FontAwesomeIcon
-                icon={faTools}
-                style={{ color: "var(--color-error)" }}
-              />
-            </div>
-            <div className="text-left">
-              <h4
-                style={{ color: "var(--color-text-primary)" }}
-                className="font-semibold text-sm"
-              >
-                Report Issue
-              </h4>
-              <p
-                style={{ color: "var(--color-text-secondary)" }}
-                className="text-xs"
-              >
-                No Internet?
+      {/* Hero */}
+      <section id="home" className="pt-36 pb-16 px-4">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-10 items-center">
+            <div>
+              <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 leading-tight">
+               Wi-Fi providers serving your neighbourhood
+              </h1>
+              
+              <p className="text-base text-slate-400 mb-6">
+               See available internet plans and choose what fits you
               </p>
-            </div>
-          </button>
+              
+              <div className="flex gap-3">
+                <button className="px-5 py-2.5 bg-emerald-500 text-white text-sm rounded-lg hover:bg-emerald-600 transition">
+                  View Plans
+                </button>
+                <button className="px-5 py-2.5 bg-slate-800 text-white text-sm rounded-lg hover:bg-slate-700 transition">
+                  Contact
+                </button>
+              </div>
 
-          <button
-            className="p-4 rounded-2xl flex items-center space-x-3"
-            style={{
-              backgroundColor: "var(--color-card-bg)",
-              boxShadow: "var(--color-shadow-footer)",
-            }}
-          >
-            <div
-              className="w-12 h-12 rounded-2xl flex items-center justify-center"
-              style={{
-                backgroundColor: `${getComputedStyle(
-                  document.documentElement
-                ).getPropertyValue("--color-success")}15`,
-              }}
-            >
-              <FontAwesomeIcon
-                icon={faHeadset}
-                style={{ color: "var(--color-success)" }}
-              />
+              <div className="grid grid-cols-3 gap-4 mt-8 pt-8 border-t border-slate-800">
+                <div>
+                  <div className="text-2xl font-bold text-emerald-400">10K+</div>
+                  <div className="text-xs text-slate-500">Users</div>
+                </div>
+                <div>
+                  <div className="text-2xl font-bold text-emerald-400">99.9%</div>
+                  <div className="text-xs text-slate-500">Uptime</div>
+                </div>
+                <div>
+                  <div className="text-2xl font-bold text-emerald-400">24/7</div>
+                  <div className="text-xs text-slate-500">Support</div>
+                </div>
+              </div>
             </div>
-            <div className="text-left">
-              <h4
-                style={{ color: "var(--color-text-primary)" }}
-                className="font-semibold text-sm"
-              >
-                Live Support
-              </h4>
-              <p
-                style={{ color: "var(--color-text-secondary)" }}
-                className="text-xs"
-              >
-                24/7 Available
-              </p>
+
+            <div className="bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 border border-slate-800 rounded-2xl p-6 lg:p-8">
+              <div className="flex items-start justify-between mb-6">
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
+                    <span className="text-xs text-slate-400 uppercase tracking-wide">Live Status</span>
+                  </div>
+                  <div className="text-3xl lg:text-4xl font-bold text-white">Active</div>
+                </div>
+                <div className="w-14 h-14 lg:w-16 lg:h-16 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-2xl flex items-center justify-center">
+                  <Wifi className="w-7 h-7 lg:w-8 lg:h-8 text-white" />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-3 lg:gap-4 mb-6">
+                <div className="bg-slate-800/60 border border-slate-700/50 rounded-xl p-3 lg:p-4">
+                  <div className="text-xl lg:text-2xl font-bold text-emerald-400">1Gbps</div>
+                  <div className="text-xs text-slate-500 mt-0.5">Speed</div>
+                </div>
+                <div className="bg-slate-800/60 border border-slate-700/50 rounded-xl p-3 lg:p-4">
+                  <div className="text-xl lg:text-2xl font-bold text-emerald-400">8ms</div>
+                  <div className="text-xs text-slate-500 mt-0.5">Latency</div>
+                </div>
+                <div className="bg-slate-800/60 border border-slate-700/50 rounded-xl p-3 lg:p-4">
+                  <div className="text-xl lg:text-2xl font-bold text-emerald-400">12</div>
+                  <div className="text-xs text-slate-500 mt-0.5">Devices</div>
+                </div>
+              </div>
+
+              <div className="space-y-3 pt-4 border-t border-slate-800">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-slate-400">Data Usage</span>
+                  <span className="text-sm font-medium text-white">8.5 GB <span className="text-slate-500">/ Today</span></span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-slate-400">Connection</span>
+                  <span className="text-sm font-medium text-emerald-400">Fiber Optic</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-slate-400">Uptime</span>
+                  <span className="text-sm font-medium text-white">99.9%</span>
+                </div>
+              </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Features */}
+      <section className="py-16 px-4 bg-slate-900/30">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-10">
+            <h2 className="text-3xl font-bold text-white mb-2">Why choose us</h2>
+            <p className="text-sm text-slate-400">Everything you need for great internet</p>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="group bg-gradient-to-br from-emerald-400/30 via-emerald-500/20 to-teal-500/20 hover:from-emerald-400/40 hover:via-emerald-500/30 hover:to-teal-500/30 border border-emerald-400/40 rounded-3xl p-6 relative overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-emerald-500/20">
+              <div className="absolute -top-8 -right-8 w-24 h-24 bg-emerald-400/10 rounded-full blur-2xl"></div>
+              <div className="absolute top-3 right-3">
+                <Wifi className="w-5 h-5 text-emerald-300/50" />
+              </div>
+              <div className="relative">
+                <div className="w-14 h-14 bg-emerald-400/20 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                  <Zap className="w-7 h-7 text-emerald-300" />
+                </div>
+                <h3 className="text-base font-semibold text-white mb-1.5">Fast Speed</h3>
+                <p className="text-xs text-emerald-200/70">Up to 1 Gbps</p>
+              </div>
+            </div>
+
+            <div className="group bg-slate-800/60 hover:bg-slate-800/80 border border-slate-700/60 rounded-3xl p-6 relative overflow-hidden transition-all duration-300 hover:scale-105 hover:border-slate-600">
+              <div className="absolute top-3 right-3">
+                <Wifi className="w-5 h-5 text-slate-500/50" />
+              </div>
+              <div className="relative">
+                <div className="w-14 h-14 bg-slate-700/50 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                  <Shield className="w-7 h-7 text-slate-300" />
+                </div>
+                <h3 className="text-base font-semibold text-white mb-1.5">Secure</h3>
+                <p className="text-xs text-slate-400">Protected network</p>
+              </div>
+            </div>
+
+            <div className="group bg-slate-800/60 hover:bg-slate-800/80 border border-slate-700/60 rounded-3xl p-6 relative overflow-hidden transition-all duration-300 hover:scale-105 hover:border-slate-600">
+              <div className="absolute top-3 right-3">
+                <Wifi className="w-5 h-5 text-slate-500/50" />
+              </div>
+              <div className="relative">
+                <div className="w-14 h-14 bg-slate-700/50 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                  <Headphones className="w-7 h-7 text-slate-300" />
+                </div>
+                <h3 className="text-base font-semibold text-white mb-1.5">Support</h3>
+                <p className="text-xs text-slate-400">24/7 help available</p>
+              </div>
+            </div>
+
+            <div className="group bg-slate-800/60 hover:bg-slate-800/80 border border-slate-700/60 rounded-3xl p-6 relative overflow-hidden transition-all duration-300 hover:scale-105 hover:border-slate-600">
+              <div className="absolute top-3 right-3">
+                <Wifi className="w-5 h-5 text-slate-500/50" />
+              </div>
+              <div className="relative">
+                <div className="w-14 h-14 bg-slate-700/50 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                  <Clock className="w-7 h-7 text-slate-300" />
+                </div>
+                <h3 className="text-base font-semibold text-white mb-1.5">Reliable</h3>
+                <p className="text-xs text-slate-400">99.9% uptime</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Plans Table */}
+      <section id="plans" className="py-16 px-4">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-10">
+            <h2 className="text-3xl font-bold text-white mb-2">Available Plans</h2>
+            <p className="text-sm text-slate-400">Compare all providers in one place</p>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="border-b border-slate-800">
+                  <th className="text-left py-3 px-4 text-xs font-medium text-slate-400 uppercase">Provider</th>
+                  <th className="text-left py-3 px-4 text-xs font-medium text-slate-400 uppercase">Speed</th>
+                  <th className="text-left py-3 px-4 text-xs font-medium text-slate-400 uppercase">Price/Month</th>
+                  <th className="text-left py-3 px-4 text-xs font-medium text-slate-400 uppercase">Data</th>
+                  <th className="text-left py-3 px-4 text-xs font-medium text-slate-400 uppercase">Router</th>
+                  <th className="py-3 px-4"></th>
+                </tr>
+              </thead>
+              <tbody>
+                {plans.map((plan, i) => (
+                  <tr key={i} className={`border-b border-slate-800/50 ${plan.highlight ? 'bg-emerald-500/5' : ''} hover:bg-slate-900/50 transition`}>
+                    <td className="py-4 px-4">
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 bg-slate-800 rounded-lg flex items-center justify-center">
+                          <Wifi className="w-4 h-4 text-slate-400" />
+                        </div>
+                        <span className="text-sm font-medium text-white">{plan.provider}</span>
+                      </div>
+                    </td>
+                    <td className="py-4 px-4 text-sm text-slate-300">{plan.speed}</td>
+                    <td className="py-4 px-4 text-sm font-semibold text-white">{plan.price}</td>
+                    <td className="py-4 px-4 text-sm text-slate-300">{plan.data}</td>
+                    <td className="py-4 px-4 text-sm text-slate-300">{plan.router}</td>
+                    <td className="py-4 px-4">
+                      <button className="px-4 py-1.5 bg-slate-800 text-white text-xs rounded-lg hover:bg-emerald-500 transition">
+                        Select
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      {/* Contact */}
+      <section id="contact" className="py-16 px-4 bg-slate-900/30">
+        <div className="max-w-2xl mx-auto text-center">
+          <h2 className="text-3xl font-bold text-white mb-3">Get started today</h2>
+          <p className="text-sm text-slate-400 mb-6">Contact us to find the best plan for you</p>
+          <button className="px-8 py-3 bg-emerald-500 text-white text-sm rounded-lg hover:bg-emerald-600 transition">
+            Contact Us
           </button>
         </div>
-      </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="border-t border-slate-900 py-6 px-4">
+        <div className="max-w-6xl mx-auto text-center text-xs text-slate-600">
+          © 2024 WiFiWala. All rights reserved.
+        </div>
+      </footer>
     </div>
   );
 }
