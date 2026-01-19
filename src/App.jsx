@@ -59,8 +59,8 @@ function AppRoutes() {
         </Routes>
       ) : (
         // All other pages inside Container/Box
-        <Container maxWidth="md" sx={{ pb: 7 }}>
-          <Box sx={{ my: 4 }}>
+       <Container disableGutters>
+  <Box sx={{ m: 0, p: 0 }}>
             <Routes>
               {/* Auth Pages */}
               <Route path="/signin" element={<Signin />} />

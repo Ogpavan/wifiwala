@@ -3,20 +3,18 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBell,
   faSearch,
-  faWifi,
   faWallet,
   faGift,
   faTools,
-  faHistory,
   faHeadset,
   faArrowRight,
   faExclamationTriangle,
-  faCheckCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 
 export default function Home() {
   const navigate = useNavigate();
+
   // Dummy data
   const walletBalance = 1250;
   const userName = "Jatin";
@@ -46,12 +44,9 @@ export default function Home() {
   ];
 
   const quickActions = [
-    { label: "Plans", icon: faWifi, color: "var(--color-purple)" },
-    { label: "Wallet", icon: faWallet, color: "var(--color-indigo)" },
-    { label: "Offers", icon: faGift, color: "var(--color-pink)" },
-    { label: "Complaints", icon: faTools, color: "var(--color-emerald)" },
-    { label: "History", icon: faHistory, color: "var(--color-orange)" },
-    { label: "Support", icon: faHeadset, color: "var(--color-cyan)" },
+    { icon: faWifi, label: "Speed Test", color: "#6366F1" },
+    { icon: faGift, label: "Offers", color: "#EC4899" },
+    { icon: faWallet, label: "Wallet", color: "#10B981" },
   ];
 
   const recommendedPlans = [
@@ -92,9 +87,9 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen pb-24">
+    <div className="min-h-screen pb-24 bg-gradient-to-br from-gray-50 to-blue-50">
       {/* Header */}
-      <div className="   pb-4">
+      <div className="pb-4">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-3">
             <div
@@ -107,69 +102,34 @@ export default function Home() {
               {userName[0]}
             </div>
             <div>
-              <p
-                style={{ color: "var(--color-text-secondary)" }}
-                className="text-sm"
-              >
-                Welcome back!
-              </p>
-              <h1
-                style={{ color: "var(--color-text-primary)" }}
-                className="text-xl font-bold"
-              >
+              <p className="text-sm text-gray-500">Welcome back!</p>
+              <h1 className="text-xl font-bold text-gray-900">
                 Hi, {userName} 👋
               </h1>
             </div>
           </div>
           <button
-            onClick={navigate("/user/notifications")}
-            className="relative p-3 rounded-full"
-            style={{
-              backgroundColor: "var(--color-card-bg)",
-              boxShadow: "var(--color-shadow-footer)",
-            }}
+            onClick={() => navigate("/user/notifications")}
+            className="relative p-3 rounded-full bg-white shadow"
           >
-            <FontAwesomeIcon
-              icon={faBell}
-              style={{ color: "var(--color-purple)" }}
-            />
-            <span
-              className="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-xs text-white font-bold"
-              style={{ backgroundColor: "var(--color-error)" }}
-            >
+            <FontAwesomeIcon icon={faBell} className="text-purple-600" />
+            <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-xs text-white font-bold bg-red-500">
               3
             </span>
           </button>
         </div>
 
         {/* Search Bar */}
-        <div
-          className="flex items-center p-4 rounded-xl mb-4"
-          style={{
-            backgroundColor: "var(--color-card-bg)",
-            boxShadow: "var(--color-shadow-footer)",
-          }}
-        >
-          <FontAwesomeIcon
-            icon={faSearch}
-            style={{ color: "var(--color-gray)" }}
-            className="mr-3"
-          />
+        <div className="flex items-center p-4 rounded-xl mb-4 bg-white shadow">
+          <FontAwesomeIcon icon={faSearch} className="mr-3 text-gray-400" />
           <input
             className="flex-1 outline-none bg-transparent text-sm"
             placeholder="Search for WiFi plans or vendors nearby"
-            style={{ color: "var(--color-text-primary)" }}
           />
         </div>
 
         {/* Wallet Balance */}
-        <div
-          className="p-5 rounded-2xl mb-6 flex items-center justify-between"
-          style={{
-            background:
-              "linear-gradient(135deg, var(--color-purple), var(--color-indigo))",
-          }}
-        >
+        <div className="p-5 rounded-2xl mb-6 flex items-center justify-between bg-gradient-to-r from-purple-500 to-indigo-500">
           <div>
             <p className="text-white/80 text-sm mb-1">Wallet Balance</p>
             <h2 className="text-white text-2xl font-bold">
@@ -183,7 +143,7 @@ export default function Home() {
       </div>
 
       {/* Banner/Offers Slider */}
-      <div className="  mb-6">
+      <div className="mb-6">
         <div className="flex space-x-4 overflow-x-auto pb-2 scrollbar-hide">
           {offers.map((offer) => (
             <div
@@ -206,39 +166,21 @@ export default function Home() {
       </div>
 
       {/* Quick Actions */}
-      <div className="  mb-6">
-        <h3
-          style={{ color: "var(--color-text-primary)" }}
-          className="text-lg font-bold mb-4"
-        >
-          Quick Actions
-        </h3>
+      <div className="mb-6">
+        <h3 className="text-lg font-bold mb-4 text-gray-900">Quick Actions</h3>
         <div className="grid grid-cols-3 gap-4">
-          {quickActions.map((action, index) => (
+          {quickActions.map((action) => (
             <button
               key={action.label}
-              className="flex flex-col items-center p-4 rounded-2xl transition-transform hover:scale-105"
-              style={{
-                backgroundColor: "var(--color-card-bg)",
-                boxShadow: "var(--color-shadow-footer)",
-              }}
+              className="flex flex-col items-center p-4 rounded-2xl transition-transform hover:scale-105 bg-white shadow"
             >
               <div
                 className="w-12 h-12 rounded-2xl flex items-center justify-center mb-3"
-                style={{ backgroundColor: `${action.color}15` }}
+                style={{ backgroundColor: `${action.color}33` }}
               >
-                <FontAwesomeIcon
-                  icon={action.icon}
-                  style={{ color: action.color }}
-                  className="text-xl"
-                />
+                <FontAwesomeIcon icon={action.icon} style={{ color: action.color }} className="text-xl" />
               </div>
-              <span
-                style={{ color: "var(--color-text-primary)" }}
-                className="text-sm font-medium"
-              >
-                {action.label}
-              </span>
+              <span className="text-sm font-medium text-gray-900">{action.label}</span>
             </button>
           ))}
         </div>
@@ -246,27 +188,12 @@ export default function Home() {
 
       {/* Active Plan */}
       {activePlan.isActive && (
-        <div className="  mb-6">
-          <h3
-            style={{ color: "var(--color-text-primary)" }}
-            className="text-lg font-bold mb-4"
-          >
-            Your Active Plan
-          </h3>
-          <div
-            className="p-5 rounded-2xl"
-            style={{
-              backgroundColor: "var(--color-card-bg)",
-              boxShadow: "var(--color-shadow-footer)",
-              background:
-                "linear-gradient(135deg, var(--color-emerald), var(--color-cyan))",
-            }}
-          >
+        <div className="mb-6">
+          <h3 className="text-lg font-bold mb-4 text-gray-900">Your Active Plan</h3>
+          <div className="p-5 rounded-2xl bg-gradient-to-r from-emerald-400 to-cyan-400 shadow">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h4 className="text-white font-bold text-lg">
-                  {activePlan.name}
-                </h4>
+                <h4 className="text-white font-bold text-lg">{activePlan.name}</h4>
                 <p className="text-white/80">{activePlan.speed}</p>
               </div>
               <div className="text-right">
@@ -285,9 +212,7 @@ export default function Home() {
                 <div
                   className="bg-white h-2 rounded-full transition-all"
                   style={{
-                    width: `${
-                      (activePlan.dataUsed / activePlan.totalData) * 100
-                    }%`,
+                    width: `${(activePlan.dataUsed / activePlan.totalData) * 100}%`,
                   }}
                 ></div>
               </div>
@@ -300,55 +225,27 @@ export default function Home() {
       )}
 
       {/* Recommended Plans */}
-      <div className="  mb-6">
+      <div className="mb-6">
         <div className="flex items-center justify-between mb-4">
-          <h3
-            style={{ color: "var(--color-text-primary)" }}
-            className="text-lg font-bold"
-          >
-            Recommended Plans
-          </h3>
-          <button
-            style={{ color: "var(--color-purple)" }}
-            className="text-sm font-semibold"
-          >
-            View All Plans
-          </button>
+          <h3 className="text-lg font-bold text-gray-900">Recommended Plans</h3>
+          <button className="text-sm font-semibold text-purple-600">View All Plans</button>
         </div>
         <div className="grid grid-cols-1 gap-4">
-          {recommendedPlans.map((plan, index) => (
+          {recommendedPlans.map((plan) => (
             <div
               key={plan.name}
-              className="p-4 rounded-2xl flex items-center justify-between"
-              style={{
-                backgroundColor: "var(--color-card-bg)",
-                boxShadow: "var(--color-shadow-footer)",
-              }}
+              className="p-4 rounded-2xl flex items-center justify-between bg-white shadow"
             >
               <div>
-                <h4
-                  style={{ color: "var(--color-text-primary)" }}
-                  className="font-bold text-lg"
-                >
-                  {plan.name}
-                </h4>
-                <p
-                  style={{ color: "var(--color-text-secondary)" }}
-                  className="text-sm mb-1"
-                >
+                <h4 className="font-bold text-lg text-gray-900">{plan.name}</h4>
+                <p className="text-sm mb-1 text-gray-500">
                   {plan.speed} • {plan.description}
                 </p>
-                <p
-                  style={{ color: "var(--color-purple)" }}
-                  className="text-xl font-bold"
-                >
+                <p className="text-xl font-bold text-purple-600">
                   ₹{plan.price}/month
                 </p>
               </div>
-              <button
-                className="px-6 py-2 rounded-xl text-white font-semibold"
-                style={{ backgroundColor: "var(--color-purple)" }}
-              >
+              <button className="px-6 py-2 rounded-xl text-white font-semibold bg-purple-600">
                 Choose
               </button>
             </div>
@@ -356,127 +253,47 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Support/Complaints */}
-      <div className="  mb-6">
-        <h3
-          style={{ color: "var(--color-text-primary)" }}
-          className="text-lg font-bold mb-4"
-        >
-          Support & Help
-        </h3>
+      {/* Support / Complaints */}
+      <div className="mb-6">
+        <h3 className="text-lg font-bold mb-4 text-gray-900">Support & Help</h3>
 
-        {/* Open Complaint Alert */}
+        {/* Open Complaint */}
         {openComplaint && (
-          <div
-            className="p-4 rounded-2xl mb-4 border-l-4"
-            style={{
-              backgroundColor: "var(--color-card-bg)",
-              borderLeftColor: "var(--color-warning)",
-              boxShadow: "var(--color-shadow-footer)",
-            }}
-          >
+          <div className="p-4 rounded-2xl mb-4 border-l-4 bg-white shadow" style={{ borderLeftColor: "#F59E0B" }}>
             <div className="flex items-start justify-between">
               <div className="flex items-start space-x-3">
-                <FontAwesomeIcon
-                  icon={faExclamationTriangle}
-                  style={{ color: "var(--color-warning)" }}
-                />
+                <FontAwesomeIcon icon={faExclamationTriangle} className="text-yellow-500" />
                 <div>
-                  <h4
-                    style={{ color: "var(--color-text-primary)" }}
-                    className="font-semibold"
-                  >
-                    {openComplaint.issue}
-                  </h4>
-                  <p
-                    style={{ color: "var(--color-text-secondary)" }}
-                    className="text-sm"
-                  >
+                  <h4 className="font-semibold text-gray-900">{openComplaint.issue}</h4>
+                  <p className="text-xs text-gray-500">
                     Status: {openComplaint.status} • {openComplaint.date}
                   </p>
                 </div>
               </div>
-              <span
-                style={{ color: "var(--color-text-secondary)" }}
-                className="text-xs"
-              >
-                {openComplaint.id}
-              </span>
+              <span className="text-xs text-gray-500">{openComplaint.id}</span>
             </div>
           </div>
         )}
 
         {/* Support Actions */}
         <div className="grid grid-cols-2 gap-4">
-          <button
-            className="p-4 rounded-2xl flex items-center space-x-3"
-            style={{
-              backgroundColor: "var(--color-card-bg)",
-              boxShadow: "var(--color-shadow-footer)",
-            }}
-          >
-            <div
-              className="w-12 h-12 rounded-2xl flex items-center justify-center"
-              style={{
-                backgroundColor: `${getComputedStyle(
-                  document.documentElement
-                ).getPropertyValue("--color-error")}15`,
-              }}
-            >
-              <FontAwesomeIcon
-                icon={faTools}
-                style={{ color: "var(--color-error)" }}
-              />
+          <button className="p-4 rounded-2xl flex items-center space-x-3 bg-white shadow">
+            <div className="w-12 h-12 rounded-2xl flex items-center justify-center bg-red-100">
+              <FontAwesomeIcon icon={faTools} className="text-red-500" />
             </div>
             <div className="text-left">
-              <h4
-                style={{ color: "var(--color-text-primary)" }}
-                className="font-semibold text-sm"
-              >
-                Report Issue
-              </h4>
-              <p
-                style={{ color: "var(--color-text-secondary)" }}
-                className="text-xs"
-              >
-                No Internet?
-              </p>
+              <h4 className="font-semibold text-sm text-gray-900">Report Issue</h4>
+              <p className="text-xs text-gray-500">No Internet?</p>
             </div>
           </button>
 
-          <button
-            className="p-4 rounded-2xl flex items-center space-x-3"
-            style={{
-              backgroundColor: "var(--color-card-bg)",
-              boxShadow: "var(--color-shadow-footer)",
-            }}
-          >
-            <div
-              className="w-12 h-12 rounded-2xl flex items-center justify-center"
-              style={{
-                backgroundColor: `${getComputedStyle(
-                  document.documentElement
-                ).getPropertyValue("--color-success")}15`,
-              }}
-            >
-              <FontAwesomeIcon
-                icon={faHeadset}
-                style={{ color: "var(--color-success)" }}
-              />
+          <button className="p-4 rounded-2xl flex items-center space-x-3 bg-white shadow">
+            <div className="w-12 h-12 rounded-2xl flex items-center justify-center bg-green-100">
+              <FontAwesomeIcon icon={faHeadset} className="text-green-500" />
             </div>
             <div className="text-left">
-              <h4
-                style={{ color: "var(--color-text-primary)" }}
-                className="font-semibold text-sm"
-              >
-                Live Support
-              </h4>
-              <p
-                style={{ color: "var(--color-text-secondary)" }}
-                className="text-xs"
-              >
-                24/7 Available
-              </p>
+              <h4 className="font-semibold text-sm text-gray-900">Live Support</h4>
+              <p className="text-xs text-gray-500">24/7 Available</p>
             </div>
           </button>
         </div>
