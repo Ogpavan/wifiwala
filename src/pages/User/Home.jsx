@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+
 import { Wifi, Zap, Headphones, TrendingUp } from 'lucide-react';
 import Carousel from "./Carousel";
 import Table from "./Table";
@@ -114,6 +115,7 @@ export default function Home() {
       <Ring/>
        <Carousel/>
       <Table/>
-    </div>
+ </div>
   );
 }
+
