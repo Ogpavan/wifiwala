@@ -113,6 +113,7 @@ export default function Home() {
      
       <Ring/>
        <Carousel/>
+       
       <Table/>
  </div>
   );
