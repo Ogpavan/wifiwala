@@ -1,31 +1,58 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Wifi, Zap, ChevronDown } from 'lucide-react';
 
 export default function PlansTable() {
   const [activeTab, setActiveTab] = useState('company');
   const [selectedFilter, setSelectedFilter] = useState('all');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [plans, setPlans] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [providers, setProviders] = useState([]);
+  const [speeds, setSpeeds] = useState([]);
 
-  const companyFilters = ['All', 'Airtel', 'Jio', 'BSNL'];
-  const speedFilters = ['All', '50 Mbps', '100 Mbps', '200 Mbps', '300 Mbps'];
+  useEffect(() => {
+    fetch("https://wifiwala-backend.vercel.app/api/plans")
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch plans");
+        return res.json();
+      })
+      .then((data) => {
+        if (data.success && data.plans) {
+          // Map backend data to display format
+          const formattedPlans = data.plans.map(plan => ({
+            id: plan._id,
+            company: plan.providerName,
+            speed: plan.speed?.replace(/[^0-9]/g, '') || '0', // Extract number only
+            price: plan.price,
+            validity: plan.validity
+          }));
+          
+          setPlans(formattedPlans);
+          
+          // Extract unique providers
+          const uniqueProviders = [...new Set(formattedPlans.map(p => p.company))];
+          setProviders(uniqueProviders);
+          
+          // Extract unique speeds
+          const uniqueSpeeds = [...new Set(formattedPlans.map(p => p.speed))].sort((a, b) => parseInt(a) - parseInt(b));
+          setSpeeds(uniqueSpeeds);
+        }
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Error fetching plans:", err);
+        setLoading(false);
+      });
+  }, []);
 
-  const plans = [
-    { id: 1, company: 'Airtel', speed: '50', price: 499, validity: '28 days' },
-   
-    { id: 4, company: 'Airtel', speed: '300', price: 1499, validity: '28 days' },
-    { id: 5, company: 'Jio', speed: '50', price: 399, validity: '30 days' },
-    { id: 6, company: 'Jio', speed: '100', price: 699, validity: '30 days' },
-   
-    { id: 9, company: 'BSNL', speed: '50', price: 449, validity: '30 days' },
-    { id: 10, company: 'BSNL', speed: '100', price: 749, validity: '30 days' },
-   
-  ];
+  const companyFilters = ['All', ...providers];
+  const speedFilters = ['All', ...speeds.map(s => `${s} Mbps`)];
 
   const getFilteredPlans = () => {
     if (selectedFilter === 'all') return plans;
     
     if (activeTab === 'company') {
-      return plans.filter(plan => plan.company.toLowerCase() === selectedFilter.toLowerCase());
+      return plans.filter(plan => plan.company?.toLowerCase() === selectedFilter.toLowerCase());
     } else {
       return plans.filter(plan => plan.speed === selectedFilter.replace(' Mbps', ''));
     }
@@ -38,10 +65,25 @@ export default function PlansTable() {
     const colors = {
       'Airtel': 'text-red-600 bg-red-50',
       'Jio': 'text-blue-600 bg-blue-50',
-      'BSNL': 'text-green-600 bg-green-50'
+      'BSNL': 'text-green-600 bg-green-50',
+      'ACT': 'text-purple-600 bg-purple-50',
+      'Hathway': 'text-orange-600 bg-orange-50'
     };
     return colors[company] || 'text-gray-600 bg-gray-50';
   };
+
+  if (loading) {
+    return (
+      <div className="px-3 py-3 pb-20">
+        <div className="flex items-center justify-center py-10">
+          <div className="text-center">
+            <div className="inline-block w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-2"></div>
+            <p className="text-gray-600 text-sm">Loading plans...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="px-3 py-3 pb-20">
