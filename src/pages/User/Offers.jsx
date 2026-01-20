@@ -1,92 +1,86 @@
-import React from "react";
+import React, { useState } from "react";
 
 const offers = [
   {
     id: 1,
     title: "20% Off First Recharge",
-    description:
-      "Get 20% instant discount on your first recharge. Valid for new users only.",
+    description: "New users only. Instant discount applied.",
     code: "FIRST20",
-    validTill: "30th Sept 2025",
-    color: "linear-gradient(135deg, var(--color-purple), var(--color-indigo))",
+    validTill: "30 Sept",
+    color: "bg-gradient-to-br from-blue-500 to-blue-600",
   },
   {
     id: 2,
-    title: "Unlimited 100Mbps for ₹499",
-    description:
-      "Enjoy unlimited data at 100Mbps for just ₹499/month. Limited time offer.",
+    title: "100Mbps @ ₹499/mo",
+    description: "Unlimited data. Limited period offer.",
     code: "SPEED100",
-    validTill: "15th Oct 2025",
-    color: "linear-gradient(135deg, var(--color-pink), var(--color-purple))",
+    validTill: "15 Oct",
+    color: "bg-gradient-to-br from-indigo-500 to-indigo-600",
   },
   {
     id: 3,
     title: "Refer & Earn ₹100",
-    description:
-      "Refer a friend and earn ₹100 wallet credit for each successful referral.",
+    description: "Get ₹100 for each successful referral.",
     code: "REFER100",
-    validTill: "31st Dec 2025",
-    color: "linear-gradient(135deg, var(--color-emerald), var(--color-cyan))",
+    validTill: "31 Dec",
+    color: "bg-gradient-to-br from-cyan-500 to-cyan-600",
   },
   {
     id: 4,
-    title: "OTT Bundle Offer",
-    description: "Get free Netflix & Hotstar with select annual plans.",
+    title: "Free OTT Bundle",
+    description: "Netflix & Hotstar with annual plans.",
     code: "OTT2025",
-    validTill: "10th Nov 2025",
-    color: "linear-gradient(135deg, var(--color-orange), var(--color-pink))",
+    validTill: "10 Nov",
+    color: "bg-gradient-to-br from-purple-500 to-purple-600",
   },
 ];
 
 export default function Offers() {
+  const [copied, setCopied] = useState(null);
+
+  const handleCopy = (code, id) => {
+    navigator.clipboard.writeText(code);
+    setCopied(id);
+    setTimeout(() => setCopied(null), 1500);
+  };
+
   return (
-    <div
-      className="min-h-screen pb-24"
-      // style={{ background: "var(--color-bg-gradient)" }}
-    >
-      <div className="     pb-4">
-        <h1
-          className="text-2xl font-bold mb-4"
-          style={{ color: "var(--color-purple)" }}
-        >
-          Latest Offers & Discounts
-        </h1>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="min-h-screen bg-gray-50 px-4 pt-6 pb-24">
+      <div className="max-w-md mx-auto">
+        <h1 className="text-2xl font-bold text-gray-900 mb-1">Offers</h1>
+        <p className="text-sm text-gray-500 mb-6">Exclusive deals for you</p>
+
+        <div className="space-y-3">
           {offers.map((offer) => (
             <div
               key={offer.id}
-              className="rounded-2xl p-5 shadow-lg flex flex-col gap-2 relative"
-              style={{
-                background: offer.color,
-                boxShadow: "var(--color-shadow-footer)",
-              }}
+              className={`${offer.color} rounded-2xl p-4 text-white shadow-lg`}
             >
-              <div className="flex items-center justify-between mb-2">
-                <h2 className="text-white font-bold text-lg">{offer.title}</h2>
-                <span className="bg-white/20 text-white text-xs px-3 py-1 rounded-full font-semibold">
+              <div className="flex justify-between items-start mb-2">
+                <h3 className="font-bold text-base leading-tight pr-2">
+                  {offer.title}
+                </h3>
+                <span className="text-xs bg-white/20 px-2 py-1 rounded-full whitespace-nowrap">
                   {offer.validTill}
                 </span>
               </div>
-              <p className="text-white/90 text-sm mb-2">{offer.description}</p>
-              <div className="flex items-center gap-2 mt-auto">
-                <span className="bg-white/20 text-white text-xs px-3 py-1 rounded font-semibold">
-                  Code: {offer.code}
+
+              <p className="text-xs text-white/90 mb-3">{offer.description}</p>
+
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-white/80">
+                  Valid till {offer.validTill}
                 </span>
                 <button
-                  className="ml-auto px-4 py-2 rounded-xl bg-white text-[var(--color-purple)] font-bold text-xs shadow hover:bg-[var(--color-indigo)] hover:text-white transition"
-                  onClick={() => navigator.clipboard.writeText(offer.code)}
+                  onClick={() => handleCopy(offer.code, offer.id)}
+                  className="bg-white text-blue-600 px-5 py-2 rounded-lg text-xs font-bold shadow-md active:scale-95 transition-transform"
                 >
-                  Copy Code
+                  {copied === offer.id ? "✓ Claimed" : "Claim"}
                 </button>
               </div>
             </div>
           ))}
         </div>
-        {offers.length === 0 && (
-          <div className="text-center text-gray-400 py-10">
-            No offers available.
-          </div>
-        )}
       </div>
     </div>
   );
