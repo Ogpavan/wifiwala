@@ -13,7 +13,7 @@ import BottomFooter from "./components/BottomFooter";
 
 import Home from "./pages/User/Home";
 import UserPlans from "./pages/User/Plans";
-// import PlanDetails from "./pages/User/PlanDetails";
+import PlanDetails from "./pages/User/PlanDetails";
 import UserOffers from "./pages/User/Offers";
 import UserComplaints from "./pages/User/Complaints";
 import Wallet from "./pages/User/Wallet";
@@ -70,7 +70,7 @@ function AppRoutes() {
               {/* User Pages (all protected) */}
               <Route path="/" element={<Home />} />
               <Route path="/user/plans" element={<UserPlans />} />
-             {/* <Route path="/user/plans/:id" element={<PlanDetails />} /> */}
+             <Route path="/user/plans/:id" element={<PlanDetails />} />
               <Route path="/user/offers" element={<UserOffers />} />
               <Route path="/user/complaints" element={<UserComplaints />} />
               <Route path="/user/wallet" element={<Wallet />} />

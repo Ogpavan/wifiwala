@@ -66,6 +66,13 @@ export default function Home() {
               <p className="text-blue-100 text-xs">Welcome back!</p>
               <h1 className="text-white text-base font-semibold">
                 Hey, {userName}!
+                <button
+  onClick={() => window.location.href = "tel:+918439411854"}
+  className="bg-blue-600 text-white px-4 py-2 rounded"
+>
+  Call Now
+</button>
+
               </h1>
             </div>
           </div>
