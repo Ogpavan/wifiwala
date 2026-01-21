@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Wifi, Zap, Headphones, TrendingUp } from 'lucide-react';
-import Ring from "./DataUsage";
+import Ring from "./Datausage";
 import Carousel from "./Carousel";
 import Table from "./Table";
 

@@ -24,7 +24,7 @@ export default function Plans() {
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    fetch("https://wifiwala-backend.vercel.app/api/plans")
+    fetch("https://wifiwalabackend.onrender.com/api/plans")
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch plans");
         return res.json();
