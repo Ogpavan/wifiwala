@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Wifi, Zap, Headphones, TrendingUp } from 'lucide-react';
+import { Wifi, Zap, Headphones, TrendingUp,  } from 'lucide-react';
 import Ring from "./Datausage";
 import Carousel from "./Carousel";
 import Table from "./Table";
@@ -66,16 +66,15 @@ export default function Home() {
               <p className="text-blue-100 text-xs">Welcome back!</p>
               <h1 className="text-white text-base font-semibold">
                 Hey, {userName}!
-                <button
-  onClick={() => window.location.href = "tel:+918439411854"}
-  className="bg-blue-600 text-white px-4 py-2 rounded"
->
-  Call Now
-</button>
-
               </h1>
             </div>
           </div>
+          {/* <button
+            onClick={() => window.location.href = "tel:+918439411854"}
+            className="w-9 h-9 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white border-2 border-white/30"
+          >
+            <Phone className="w-4 h-4" />
+          </button> */}
         </div>
         
         <p className="text-blue-50 text-xs mt-1">Saturday, Dec 09, 2023</p>
