@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const sortOptions = [
   { label: "Price (Low → High)", value: "price" },
@@ -15,6 +16,7 @@ function getValidityValue(validity) {
 }
 
 export default function Plans() {
+  const navigate = useNavigate();
   const [plans, setPlans] = useState([]);
   const [providers, setProviders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -24,29 +26,35 @@ export default function Plans() {
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    fetch("https://wifiwalabackend.onrender.com/api/plans")
+    const BASE_URL =
+      window.location.hostname === "localhost"
+        ? "http://localhost:3000"
+        : "https://wifiwalabackend.onrender.com";
+
+    fetch(`${BASE_URL}/api/plans`)
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch plans");
         return res.json();
       })
       .then((data) => {
-        if (data.success && data.plans) {
-          const formattedPlans = data.plans.map(plan => ({
-            id: plan._id,
-            provider: plan.providerName,
-            speed: plan.speed,
-            price: plan.price,
-            validity: plan.validity,
-            data: plan.data,
-            color: plan.color || "from-blue-400 to-blue-600",
-            icon: plan.icon || "fa-solid fa-wifi"
-          }));
-          
-          setPlans(formattedPlans);
-          
-          const uniqueProviders = [...new Set(formattedPlans.map(p => p.provider))];
-          setProviders(uniqueProviders);
-        }
+        // ✅ backend gives { message, plans }
+        const formattedPlans = data.plans.map((plan) => ({
+          id: plan.plan_id,
+          provider: plan.name, // using plan name as provider label
+          speed: plan.speed,
+          price: Number(plan.price),
+          validity: plan.duration_days,
+          data: plan.data_limit,
+          icon: "fa-solid fa-wifi",
+        }));
+
+        setPlans(formattedPlans);
+
+        const uniqueProviders = [
+          ...new Set(formattedPlans.map((p) => p.provider)),
+        ];
+        setProviders(uniqueProviders);
+
         setLoading(false);
       })
       .catch((err) => {
@@ -66,40 +74,22 @@ export default function Plans() {
   );
 
   if (sort === "price") {
-    filtered = filtered.sort((a, b) => (a.price || 0) - (b.price || 0));
+    filtered.sort((a, b) => a.price - b.price);
   }
   if (sort === "speed") {
-    filtered = filtered.sort(
+    filtered.sort(
       (a, b) => getSpeedValue(b.speed) - getSpeedValue(a.speed)
     );
   }
   if (sort === "validity") {
-    filtered = filtered.sort(
+    filtered.sort(
       (a, b) => getValidityValue(b.validity) - getValidityValue(a.validity)
     );
   }
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-center">
-          <div className="inline-block w-8 h-8 border-3 border-blue-500 border-t-transparent rounded-full animate-spin mb-2"></div>
-          <p className="text-gray-600 text-sm">Loading plans...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-white flex items-center justify-center px-4">
-        <div className="text-center">
-          <p className="font-semibold text-red-500 text-sm">Error loading plans</p>
-          <p className="text-xs text-gray-500 mt-1">{error}</p>
-        </div>
-      </div>
-    );
-  }
+  const handleViewMore = (planId) => {
+    navigate(`/user/plans/${planId}`);
+  };
 
   return (
     <>
@@ -164,7 +154,7 @@ export default function Plans() {
             >
               {/* Provider */}
               <div className="flex items-center gap-3 mb-3">
-                <div className={`w-10 h-10 bg-gradient-to-br ${plan.color} rounded-lg flex items-center justify-center`}>
+                <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
                   <i className={`${plan.icon} text-white text-base`}></i>
                 </div>
                 <div className="flex-1">
@@ -211,7 +201,7 @@ export default function Plans() {
                 </button>
                 <button
                   className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 text-xs font-medium rounded-xl active:bg-gray-200"
-                  onClick={() => alert(`View details for ${plan.provider} plan`)}
+                  onClick={() => handleViewMore(plan.id)}
                 >
                   View More
                 </button>

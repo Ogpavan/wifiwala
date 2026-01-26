@@ -1,19 +1,13 @@
 import React from "react";
+import { Mail, Phone, MapPin, Wifi, User } from "lucide-react";
+import SettingsSidebar from "./Settings.jsx";
 
 export default function Profile() {
-  const handleLogout = async () => {
-    console.log("Logout clicked");
-    // Add your logout logic here
-  };
-
-  // Dummy user data
   const user = {
     name: "Pawan Pal",
     email: "pawan.pal@email.com",
     phone: "+91 98765 43210",
-    avatar:
-      "https://ui-avatars.com/api/?name=Pawan+Pal&background=7c3aed&color=fff&size=128",
-    wallet: 1250,
+    avatar: "https://ui-avatars.com/api/?name=Pawan+Pal&background=1e3a8a&color=fff&size=200",
     joined: "Jan 2024",
     address: "B-123, Wifi Street, Mumbai, India",
     activePlan: {
@@ -24,94 +18,98 @@ export default function Profile() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-24">
-      <div className="max-w-md mx-auto px-4 pt-6">
+    <div className="min-h-screen bg-white">
+      {/* Header */}
+      <div className="bg-blue-900 px-6 py-4 flex justify-between items-center">
+        <h1 className="text-xl font-bold text-white">Profile</h1>
+        <SettingsSidebar />
+      </div>
+
+      <div className="max-w-md mx-auto px-4 py-6 pb-20">
         {/* Profile Header */}
-        <div className="flex flex-col items-center mb-6">
-          <div className="w-24 h-24 rounded-full border-4 border-blue-500 shadow-lg mb-3 bg-white">
+        <div className="text-center mb-8">
+          <div className="relative inline-block mb-4">
             <img
               src={user.avatar}
               alt={user.name}
-              className="w-full h-full rounded-full object-cover"
+              className="w-28 h-28 rounded-full shadow-lg"
             />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-1">
-            {user.name}
-          </h2>
-          <p className="text-sm text-gray-500 mb-2">{user.email}</p>
-          <span className="px-4 py-1.5 rounded-full text-xs font-semibold bg-blue-600 text-white mb-2">
-            Wallet: ₹{user.wallet}
-          </span>
-          <span className="text-xs text-gray-500">
-            Member since {user.joined}
-          </span>
+          <h2 className="text-2xl font-bold text-gray-900 mb-1">{user.name}</h2>
+          <p className="text-gray-600 text-sm mb-1">{user.email}</p>
+          <p className="text-gray-500 text-xs">Member since {user.joined}</p>
         </div>
 
-        {/* Profile Details */}
-        <div className="space-y-4">
-          <div className="bg-white rounded-2xl shadow-sm p-5 border border-gray-100">
-            <h3 className="text-lg font-bold text-blue-600 mb-4">
-              Personal Details
-            </h3>
-            <div className="space-y-3 text-sm">
-              <div className="flex items-start gap-3">
-                <span className="font-semibold w-20 text-gray-500">Name:</span>
-                <span className="text-gray-900 flex-1">{user.name}</span>
+        {/* Active Plan Card */}
+        <div className="bg-blue-900 rounded-2xl p-6 mb-6 shadow-lg">
+          <div className="flex items-start justify-between mb-4">
+            <div className="flex-1">
+              <p className="text-blue-300 text-xs uppercase tracking-wide mb-2">Active Plan</p>
+              <h3 className="text-white text-xl font-bold mb-1">{user.activePlan.name}</h3>
+              <div className="flex items-center gap-2 text-blue-200">
+                <Wifi className="w-4 h-4" />
+                <span className="text-lg font-semibold">{user.activePlan.speed}</span>
               </div>
-              <div className="flex items-start gap-3">
-                <span className="font-semibold w-20 text-gray-500">Email:</span>
-                <span className="text-gray-900 flex-1 break-all">
-                  {user.email}
-                </span>
-              </div>
-              <div className="flex items-start gap-3">
-                <span className="font-semibold w-20 text-gray-500">Phone:</span>
-                <span className="text-gray-900 flex-1">{user.phone}</span>
-              </div>
-              <div className="flex items-start gap-3">
-                <span className="font-semibold w-20 text-gray-500">
-                  Address:
-                </span>
-                <span className="text-gray-900 flex-1">{user.address}</span>
-              </div>
+            </div>
+            <div className="bg-blue-800 p-3 rounded-xl">
+              <Wifi className="w-6 h-6 text-white" />
             </div>
           </div>
-
-          {/* Active Plan */}
-          <div className="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl p-5 shadow-lg">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-white text-lg font-bold">Active Plan</h3>
-              <span className="bg-white/20 text-white text-xs px-3 py-1 rounded-full font-semibold backdrop-blur-sm border border-white/30">
-                {user.activePlan.speed}
-              </span>
+          
+          <div className="flex items-center justify-between pt-4 border-t border-blue-800">
+            <div>
+              <p className="text-blue-300 text-xs mb-1">Valid till</p>
+              <p className="text-white font-medium text-sm">{user.activePlan.expiry}</p>
             </div>
-            <div className="text-white font-semibold text-base mb-1">
-              {user.activePlan.name}
-            </div>
-            <div className="text-white/90 text-sm mb-4">
-              Valid till{" "}
-              <span className="font-semibold">{user.activePlan.expiry}</span>
-            </div>
-            <button className="w-full bg-white text-blue-600 font-bold py-2.5 rounded-xl hover:bg-blue-50 transition active:scale-95">
+            <button className="px-4 py-2 bg-white text-blue-900 text-sm font-semibold rounded-lg hover:bg-blue-50 transition-colors">
               Renew / Upgrade
             </button>
           </div>
+        </div>
 
-          {/* Settings & Actions */}
-          <div className="bg-white rounded-2xl shadow-sm p-5 border border-gray-100">
-            <h3 className="text-lg font-bold text-blue-600 mb-4">
-              Account Actions
-            </h3>
-            <div className="flex flex-col gap-3">
-              <button className="w-full py-2.5 rounded-xl font-semibold text-blue-600 border-2 border-blue-600 hover:bg-blue-600 hover:text-white transition active:scale-95">
-                Edit Profile
-              </button>
-              <button
-                onClick={handleLogout}
-                className="w-full py-2.5 rounded-xl font-semibold text-red-500 border-2 border-red-500 hover:bg-red-500 hover:text-white transition active:scale-95"
-              >
-                Logout
-              </button>
+        {/* Personal Details */}
+        <div className="bg-gray-50 rounded-2xl p-6">
+          <h3 className="text-lg font-bold text-gray-900 mb-4">Personal Details</h3>
+          
+          <div className="space-y-4">
+            <div className="flex items-start gap-3">
+              <div className="p-2 bg-blue-100 rounded-lg">
+                <User className="w-5 h-5 text-blue-900" />
+              </div>
+              <div className="flex-1">
+                <p className="text-xs text-gray-500 mb-1">Full Name</p>
+                <p className="text-gray-900 font-medium">{user.name}</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3">
+              <div className="p-2 bg-blue-100 rounded-lg">
+                <Mail className="w-5 h-5 text-blue-900" />
+              </div>
+              <div className="flex-1">
+                <p className="text-xs text-gray-500 mb-1">Email Address</p>
+                <p className="text-gray-900 font-medium">{user.email}</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3">
+              <div className="p-2 bg-blue-100 rounded-lg">
+                <Phone className="w-5 h-5 text-blue-900" />
+              </div>
+              <div className="flex-1">
+                <p className="text-xs text-gray-500 mb-1">Phone Number</p>
+                <p className="text-gray-900 font-medium">{user.phone}</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3">
+              <div className="p-2 bg-blue-100 rounded-lg">
+                <MapPin className="w-5 h-5 text-blue-900" />
+              </div>
+              <div className="flex-1">
+                <p className="text-xs text-gray-500 mb-1">Address</p>
+                <p className="text-gray-900 font-medium">{user.address}</p>
+              </div>
             </div>
           </div>
         </div>

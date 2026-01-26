@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Wifi, Zap, ChevronDown } from 'lucide-react';
+import { Wifi, Zap, DollarSign, ChevronDown } from 'lucide-react';
 
 export default function PlansTable() {
   const [activeTab, setActiveTab] = useState('company');
@@ -9,34 +9,36 @@ export default function PlansTable() {
   const [loading, setLoading] = useState(true);
   const [providers, setProviders] = useState([]);
   const [speeds, setSpeeds] = useState([]);
+  const [prices, setPrices] = useState([]);
 
   useEffect(() => {
-    fetch("https://wifiwalabackend.onrender.com/api/plans")
+    fetch("http://localhost:3000/api/plans")
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch plans");
         return res.json();
       })
       .then((data) => {
-        if (data.success && data.plans) {
-          // Map backend data to display format
-          const formattedPlans = data.plans.map(plan => ({
-            id: plan._id,
-            company: plan.providerName,
-            speed: plan.speed?.replace(/[^0-9]/g, '') || '0', // Extract number only
-            price: plan.price,
-            validity: plan.validity
-          }));
-          
-          setPlans(formattedPlans);
-          
-          // Extract unique providers
-          const uniqueProviders = [...new Set(formattedPlans.map(p => p.company))];
-          setProviders(uniqueProviders);
-          
-          // Extract unique speeds
-          const uniqueSpeeds = [...new Set(formattedPlans.map(p => p.speed))].sort((a, b) => parseInt(a) - parseInt(b));
-          setSpeeds(uniqueSpeeds);
-        }
+        const formattedPlans = data.plans.map(plan => ({
+          id: plan.plan_id,
+          company: plan.name,                     
+          speed: plan.speed.replace(/[^0-9]/g, ''),
+          price: plan.price,
+          validity: `${plan.duration_days} days`
+        }));
+
+        setPlans(formattedPlans);
+
+        const uniqueProviders = [...new Set(formattedPlans.map(p => p.company))];
+        setProviders(uniqueProviders);
+
+        const uniqueSpeeds = [...new Set(formattedPlans.map(p => p.speed))]
+          .sort((a, b) => parseInt(a) - parseInt(b));
+        setSpeeds(uniqueSpeeds);
+
+        const uniquePrices = [...new Set(formattedPlans.map(p => p.price))]
+          .sort((a, b) => parseInt(a) - parseInt(b));
+        setPrices(uniquePrices);
+
         setLoading(false);
       })
       .catch((err) => {
@@ -47,19 +49,28 @@ export default function PlansTable() {
 
   const companyFilters = ['All', ...providers];
   const speedFilters = ['All', ...speeds.map(s => `${s} Mbps`)];
+  const priceFilters = ['All', ...prices.map(p => `₹${p}`)];
 
   const getFilteredPlans = () => {
     if (selectedFilter === 'all') return plans;
-    
+
     if (activeTab === 'company') {
-      return plans.filter(plan => plan.company?.toLowerCase() === selectedFilter.toLowerCase());
+      return plans.filter(
+        plan => plan.company?.toLowerCase() === selectedFilter.toLowerCase()
+      );
+    } else if (activeTab === 'speed') {
+      return plans.filter(
+        plan => plan.speed === selectedFilter.replace(' Mbps', '')
+      );
     } else {
-      return plans.filter(plan => plan.speed === selectedFilter.replace(' Mbps', ''));
+      return plans.filter(
+        plan => plan.price === selectedFilter.replace('₹', '')
+      );
     }
   };
 
   const filteredPlans = getFilteredPlans();
-  const filters = activeTab === 'company' ? companyFilters : speedFilters;
+  const filters = activeTab === 'company' ? companyFilters : activeTab === 'speed' ? speedFilters : priceFilters;
 
   const getCompanyColor = (company) => {
     const colors = {
@@ -70,6 +81,93 @@ export default function PlansTable() {
       'Hathway': 'text-orange-600 bg-orange-50'
     };
     return colors[company] || 'text-gray-600 bg-gray-50';
+  };
+
+  const handleSelectPlan = (planId) => {
+    window.location.href = `/user/plans/${planId}`;
+  };
+
+  const renderTableHeaders = () => {
+    if (activeTab === 'company') {
+      return (
+        <>
+          <th className="px-3 py-2.5 text-left text-xs font-bold text-gray-700 uppercase">Provider</th>
+          <th className="px-3 py-2.5 text-left text-xs font-bold text-gray-700 uppercase">Speed</th>
+          <th className="px-3 py-2.5 text-left text-xs font-bold text-gray-700 uppercase">Price</th>
+          <th className="px-3 py-2.5 text-left text-xs font-bold text-gray-700 uppercase">Validity</th>
+        </>
+      );
+    } else if (activeTab === 'speed') {
+      return (
+        <>
+          <th className="px-3 py-2.5 text-left text-xs font-bold text-gray-700 uppercase">Speed</th>
+          <th className="px-3 py-2.5 text-left text-xs font-bold text-gray-700 uppercase">Provider</th>
+          <th className="px-3 py-2.5 text-left text-xs font-bold text-gray-700 uppercase">Price</th>
+          <th className="px-3 py-2.5 text-left text-xs font-bold text-gray-700 uppercase">Validity</th>
+        </>
+      );
+    } else {
+      return (
+        <>
+          <th className="px-3 py-2.5 text-left text-xs font-bold text-gray-700 uppercase">Price</th>
+          <th className="px-3 py-2.5 text-left text-xs font-bold text-gray-700 uppercase">Provider</th>
+          <th className="px-3 py-2.5 text-left text-xs font-bold text-gray-700 uppercase">Speed</th>
+          <th className="px-3 py-2.5 text-left text-xs font-bold text-gray-700 uppercase">Validity</th>
+        </>
+      );
+    }
+  };
+
+  const renderTableRow = (plan) => {
+    if (activeTab === 'company') {
+      return (
+        <>
+          <td className="px-3 py-3">
+            <span className={`inline-flex px-2 py-1 rounded-md text-xs font-bold ${getCompanyColor(plan.company)}`}>
+              {plan.company}
+            </span>
+          </td>
+          <td className="px-3 py-3 flex items-center gap-1">
+            <Zap className="w-3.5 h-3.5 text-blue-500" />
+            <span className="font-bold">{plan.speed}</span> Mbps
+          </td>
+          <td className="px-3 py-3 font-bold text-blue-600">₹{plan.price}</td>
+          <td className="px-3 py-3 text-xs">{plan.validity}</td>
+        </>
+      );
+    } else if (activeTab === 'speed') {
+      return (
+        <>
+          <td className="px-3 py-3 flex items-center gap-1">
+            <Zap className="w-3.5 h-3.5 text-blue-500" />
+            <span className="font-bold">{plan.speed}</span> Mbps
+          </td>
+          <td className="px-3 py-3">
+            <span className={`inline-flex px-2 py-1 rounded-md text-xs font-bold ${getCompanyColor(plan.company)}`}>
+              {plan.company}
+            </span>
+          </td>
+          <td className="px-3 py-3 font-bold text-blue-600">₹{plan.price}</td>
+          <td className="px-3 py-3 text-xs">{plan.validity}</td>
+        </>
+      );
+    } else {
+      return (
+        <>
+          <td className="px-3 py-3 font-bold text-blue-600">₹{plan.price}</td>
+          <td className="px-3 py-3">
+            <span className={`inline-flex px-2 py-1 rounded-md text-xs font-bold ${getCompanyColor(plan.company)}`}>
+              {plan.company}
+            </span>
+          </td>
+          <td className="px-3 py-3 flex items-center gap-1">
+            <Zap className="w-3.5 h-3.5 text-blue-500" />
+            <span className="font-bold">{plan.speed}</span> Mbps
+          </td>
+          <td className="px-3 py-3 text-xs">{plan.validity}</td>
+        </>
+      );
+    }
   };
 
   if (loading) {
@@ -111,6 +209,7 @@ export default function PlansTable() {
             Company
           </div>
         </button>
+
         <button
           onClick={() => {
             setActiveTab('speed');
@@ -127,6 +226,23 @@ export default function PlansTable() {
             Speed
           </div>
         </button>
+
+        <button
+          onClick={() => {
+            setActiveTab('price');
+            setSelectedFilter('all');
+          }}
+          className={`flex-1 py-2.5 px-3 rounded-xl font-semibold text-xs transition-all ${
+            activeTab === 'price'
+              ? 'bg-blue-600 text-white shadow-md'
+              : 'bg-white text-gray-600 border border-gray-200'
+          }`}
+        >
+          <div className="flex items-center justify-center gap-1.5">
+            <DollarSign className="w-3.5 h-3.5" />
+            Price
+          </div>
+        </button>
       </div>
 
       {/* Dropdown */}
@@ -139,13 +255,13 @@ export default function PlansTable() {
             <span className="text-gray-700 font-medium capitalize text-sm">
               {selectedFilter === 'all' ? 'All Plans' : selectedFilter}
             </span>
-            <ChevronDown 
+            <ChevronDown
               className={`w-4 h-4 text-gray-400 transition-transform ${
                 isDropdownOpen ? 'rotate-180' : ''
-              }`} 
+              }`}
             />
           </button>
-          
+
           {isDropdownOpen && (
             <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-20 overflow-hidden">
               {filters.map((filter, index) => (
@@ -156,8 +272,8 @@ export default function PlansTable() {
                     setIsDropdownOpen(false);
                   }}
                   className={`w-full px-3 py-2 text-left text-sm hover:bg-blue-50 transition-all ${
-                    selectedFilter === filter.toLowerCase() 
-                      ? 'bg-blue-50 text-blue-600 font-semibold' 
+                    selectedFilter === filter.toLowerCase()
+                      ? 'bg-blue-50 text-blue-600 font-semibold'
                       : 'text-gray-700'
                   } ${index !== filters.length - 1 ? 'border-b border-gray-100' : ''}`}
                 >
@@ -169,62 +285,30 @@ export default function PlansTable() {
         </div>
       </div>
 
-      {/* Modern Table */}
+      {/* Table */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="bg-gray-50 border-b border-gray-200">
-                <th className="px-3 py-2.5 text-left text-xs font-bold text-gray-700 uppercase">
-                  Provider
-                </th>
-                <th className="px-3 py-2.5 text-left text-xs font-bold text-gray-700 uppercase">
-                  Speed
-                </th>
-                <th className="px-3 py-2.5 text-left text-xs font-bold text-gray-700 uppercase">
-                  Price
-                </th>
-                <th className="px-3 py-2.5 text-left text-xs font-bold text-gray-700 uppercase">
-                  Validity
-                </th>
-                <th className="px-3 py-2.5 text-right text-xs font-bold text-gray-700 uppercase">
-                  
-                </th>
+                {renderTableHeaders()}
+                <th className="px-3 py-2.5"></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {filteredPlans.length > 0 ? (
-                filteredPlans.map((plan) => (
-                  <tr 
-                    key={plan.id} 
-                    className="hover:bg-gray-50 transition-all"
-                  >
-                    <td className="px-3 py-3">
-                      <span className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-bold ${getCompanyColor(plan.company)}`}>
-                        {plan.company}
-                      </span>
-                    </td>
-                    <td className="px-3 py-3">
-                      <div className="flex items-center gap-1">
-                        <Zap className="w-3.5 h-3.5 text-blue-500" />
-                        <span className="font-bold text-gray-900 text-sm">{plan.speed}</span>
-                        <span className="text-xs text-gray-500">Mbps</span>
-                      </div>
-                    </td>
-                    <td className="px-3 py-3">
-                      <span className="font-bold text-blue-600 text-sm">₹{plan.price}</span>
-                    </td>
-                    <td className="px-3 py-3">
-                      <span className="text-xs text-gray-600">{plan.validity}</span>
-                    </td>
-                    <td className="px-3 py-3 text-right">
-                      <button className="bg-blue-600 text-white px-4 py-1.5 rounded-lg text-xs font-semibold hover:bg-blue-700 transition-all">
-                        Select
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              ) : (
+              {filteredPlans.length ? filteredPlans.map(plan => (
+                <tr key={plan.id} className="hover:bg-gray-50">
+                  {renderTableRow(plan)}
+                  <td className="px-3 py-3 text-right">
+                    <button 
+                      onClick={() => handleSelectPlan(plan.id)}
+                      className="bg-blue-600 text-white px-4 py-1.5 rounded-lg text-xs font-semibold hover:bg-blue-700 transition-colors"
+                    >
+                      Select
+                    </button>
+                  </td>
+                </tr>
+              )) : (
                 <tr>
                   <td colSpan="5" className="px-3 py-6 text-center text-gray-500 text-sm">
                     No plans available
