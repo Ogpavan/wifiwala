@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
+// Sort options
 const sortOptions = [
   { label: "Price (Low → High)", value: "price" },
   { label: "Speed (High → Low)", value: "speed" },
   { label: "Validity (Long → Short)", value: "validity" },
 ];
 
+// Helper functions
 function getSpeedValue(speed) {
   return parseInt(speed) || 0;
 }
@@ -17,6 +19,7 @@ function getValidityValue(validity) {
 
 export default function Plans() {
   const navigate = useNavigate();
+
   const [plans, setPlans] = useState([]);
   const [providers, setProviders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -26,10 +29,8 @@ export default function Plans() {
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    const BASE_URL =
-      window.location.hostname === "localhost"
-        ? "http://localhost:3000"
-        : "https://wifiwalabackend.onrender.com";
+    // Use environment variable for API URL
+  const BASE_URL = import.meta.env.VITE_APP_API_URL;
 
     fetch(`${BASE_URL}/api/plans`)
       .then((res) => {
@@ -37,10 +38,10 @@ export default function Plans() {
         return res.json();
       })
       .then((data) => {
-        // ✅ backend gives { message, plans }
+        // Format plans for UI
         const formattedPlans = data.plans.map((plan) => ({
           id: plan.plan_id,
-          provider: plan.name, // using plan name as provider label
+          provider: plan.name,
           speed: plan.speed,
           price: Number(plan.price),
           validity: plan.duration_days,
@@ -65,6 +66,7 @@ export default function Plans() {
 
   const allProviders = ["All", ...providers];
 
+  // Filter plans
   let filtered = plans.filter(
     (p) =>
       (provider === "All" || p.provider === provider) &&
@@ -73,23 +75,15 @@ export default function Plans() {
         (p.price?.toString() || "").includes(search.toLowerCase()))
   );
 
-  if (sort === "price") {
-    filtered.sort((a, b) => a.price - b.price);
-  }
-  if (sort === "speed") {
-    filtered.sort(
-      (a, b) => getSpeedValue(b.speed) - getSpeedValue(a.speed)
-    );
-  }
-  if (sort === "validity") {
-    filtered.sort(
-      (a, b) => getValidityValue(b.validity) - getValidityValue(a.validity)
-    );
-  }
+  // Sort plans
+  if (sort === "price") filtered.sort((a, b) => a.price - b.price);
+  if (sort === "speed") filtered.sort((a, b) => getSpeedValue(b.speed) - getSpeedValue(a.speed));
+  if (sort === "validity") filtered.sort((a, b) => getValidityValue(b.validity) - getValidityValue(a.validity));
 
-  const handleViewMore = (planId) => {
-    navigate(`/user/plans/${planId}`);
-  };
+  const handleViewMore = (planId) => navigate(`/user/plans/${planId}`);
+
+  if (loading) return <div className="text-center py-12">Loading...</div>;
+  if (error) return <div className="text-center py-12 text-red-500">{error}</div>;
 
   return (
     <>
@@ -97,13 +91,11 @@ export default function Plans() {
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
       />
-      
+
       <div className="min-h-screen bg-white pb-20">
         {/* Header */}
         <div className="px-4 pt-4 pb-3">
-          <h1 className="text-xl font-bold text-gray-900 mb-1">
-            Internet Plans
-          </h1>
+          <h1 className="text-xl font-bold text-gray-900 mb-1">Internet Plans</h1>
           <p className="text-xs text-gray-500">Find the best plan for you</p>
         </div>
 
@@ -116,7 +108,6 @@ export default function Plans() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
-            
             <div className="flex gap-2">
               <select
                 className="flex-1 px-3 py-2 rounded-2xl border border-gray-200 bg-gray-50 text-sm text-gray-900 outline-none focus:border-blue-500"
@@ -129,7 +120,6 @@ export default function Plans() {
                   </option>
                 ))}
               </select>
-
               <select
                 className="flex-1 px-3 py-2 rounded-2xl border border-gray-200 bg-gray-50 text-sm text-gray-900 outline-none focus:border-blue-500"
                 value={sort}
@@ -148,19 +138,14 @@ export default function Plans() {
         {/* Plans Grid */}
         <div className="px-4 space-y-3">
           {filtered.map((plan) => (
-            <div
-              key={plan.id}
-              className="bg-white rounded-xl shadow-sm border border-gray-200 p-4"
-            >
+            <div key={plan.id} className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
               {/* Provider */}
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
                   <i className={`${plan.icon} text-white text-base`}></i>
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-semibold text-sm text-gray-900">
-                    {plan.provider || "Unknown Provider"}
-                  </h3>
+                  <h3 className="font-semibold text-sm text-gray-900">{plan.provider || "Unknown Provider"}</h3>
                 </div>
                 <div className="text-right">
                   <div className="text-lg font-bold text-blue-600">₹{plan.price}</div>
@@ -208,7 +193,7 @@ export default function Plans() {
               </div>
             </div>
           ))}
-          
+
           {filtered.length === 0 && (
             <div className="text-center py-12">
               <i className="fa-solid fa-inbox text-4xl text-gray-300 mb-2"></i>

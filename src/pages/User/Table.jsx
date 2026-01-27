@@ -11,8 +11,10 @@ export default function PlansTable() {
   const [speeds, setSpeeds] = useState([]);
   const [prices, setPrices] = useState([]);
 
+  const BASE_URL = import.meta.env.VITE_APP_API_URL;
+
   useEffect(() => {
-    fetch("http://localhost:3000/api/plans")
+    fetch(`${BASE_URL}/api/plans`)
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch plans");
         return res.json();
@@ -45,7 +47,7 @@ export default function PlansTable() {
         console.error("Error fetching plans:", err);
         setLoading(false);
       });
-  }, []);
+  }, [BASE_URL]);
 
   const companyFilters = ['All', ...providers];
   const speedFilters = ['All', ...speeds.map(s => `${s} Mbps`)];
