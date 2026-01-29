@@ -3,10 +3,10 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faHouse,
-  faUser,
   faWifi,
-  faTags, // For Offers
+  faTags,
   faListAlt,
+  faTriangleExclamation, // Complaints icon
 } from "@fortawesome/free-solid-svg-icons";
 
 const navItems = [
@@ -14,7 +14,7 @@ const navItems = [
   { label: "Plans", icon: faListAlt, path: "/user/plans" },
   { label: "wifi", icon: faWifi, path: "/user/speedtest", center: true },
   { label: "Offers", icon: faTags, path: "/user/offers" },
-  { label: "Profile", icon: faUser, path: "/user/profile" },
+  { label: "Help", icon: faTriangleExclamation, path: "/user/complaints" },
 ];
 
 export default function BottomFooter() {
@@ -31,7 +31,7 @@ export default function BottomFooter() {
     setTimeout(() => {
       setAnimating(false);
       navigate(navItems[2].path);
-    }, 350); // Animation duration
+    }, 350);
   };
 
   return (
@@ -47,7 +47,7 @@ export default function BottomFooter() {
         {/* Home */}
         <button
           onClick={() => navigate(navItems[0].path)}
-          className={`flex flex-col items-center flex-1 py-2 transition-all duration-200`}
+          className="flex flex-col items-center flex-1 py-2 transition-all duration-200"
           style={{
             color:
               currentIndex === 0 ? "var(--color-purple)" : "var(--color-gray)",
@@ -58,12 +58,6 @@ export default function BottomFooter() {
             icon={navItems[0].icon}
             size="lg"
             className="mb-1"
-            style={{
-              color:
-                currentIndex === 0
-                  ? "var(--color-purple)"
-                  : "var(--color-gray)",
-            }}
           />
           <span className="text-xs">{navItems[0].label}</span>
         </button>
@@ -71,7 +65,7 @@ export default function BottomFooter() {
         {/* Plans */}
         <button
           onClick={() => navigate(navItems[1].path)}
-          className={`flex flex-col items-center flex-1 py-2 transition-all duration-200 mr-6`}
+          className="flex flex-col items-center flex-1 py-2 transition-all duration-200 mr-6"
           style={{
             color:
               currentIndex === 1 ? "var(--color-purple)" : "var(--color-gray)",
@@ -82,12 +76,6 @@ export default function BottomFooter() {
             icon={navItems[1].icon}
             size="lg"
             className="mb-1"
-            style={{
-              color:
-                currentIndex === 1
-                  ? "var(--color-purple)"
-                  : "var(--color-gray)",
-            }}
           />
           <span className="text-xs">{navItems[1].label}</span>
         </button>
@@ -114,7 +102,7 @@ export default function BottomFooter() {
         {/* Offers */}
         <button
           onClick={() => navigate(navItems[3].path)}
-          className={`flex flex-col items-center flex-1 py-2 transition-all duration-200 ml-6`}
+          className="flex flex-col items-center flex-1 py-2 transition-all duration-200 ml-6"
           style={{
             color:
               currentIndex === 3 ? "var(--color-purple)" : "var(--color-gray)",
@@ -125,20 +113,14 @@ export default function BottomFooter() {
             icon={navItems[3].icon}
             size="lg"
             className="mb-1"
-            style={{
-              color:
-                currentIndex === 3
-                  ? "var(--color-purple)"
-                  : "var(--color-gray)",
-            }}
           />
           <span className="text-xs">{navItems[3].label}</span>
         </button>
 
-        {/* Profile */}
+        {/* Complaints */}
         <button
           onClick={() => navigate(navItems[4].path)}
-          className={`flex flex-col items-center flex-1 py-2 transition-all duration-200`}
+          className="flex flex-col items-center flex-1 py-2 transition-all duration-200"
           style={{
             color:
               currentIndex === 4 ? "var(--color-purple)" : "var(--color-gray)",
@@ -149,12 +131,6 @@ export default function BottomFooter() {
             icon={navItems[4].icon}
             size="lg"
             className="mb-1"
-            style={{
-              color:
-                currentIndex === 4
-                  ? "var(--color-purple)"
-                  : "var(--color-gray)",
-            }}
           />
           <span className="text-xs">{navItems[4].label}</span>
         </button>
