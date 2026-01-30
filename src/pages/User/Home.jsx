@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Wifi, Zap, Headphones, Wallet,Phone } from "lucide-react";
 
-import Ring from "./Datausage";
+import Ring from "./Portchange";
 import Carousel from "./Carousel";
 import Table from "./Table";
 
