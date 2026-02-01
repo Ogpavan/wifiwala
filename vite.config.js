@@ -41,6 +41,6 @@ export default defineConfig({
   ],
   server: {
     host: "0.0.0.0", // allows external devices on same network
-    port: 5173, // you can change if needed
+    port: 5174, // you can change if needed
   },
 });

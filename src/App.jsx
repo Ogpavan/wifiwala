@@ -1,5 +1,4 @@
-
-import React from "react";
+import React, { useEffect } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -31,6 +30,14 @@ import { AuthProvider } from "./context/AuthContext.jsx";
 import Signin from "./Auth/Signin.jsx";
 import Signup from "./Auth/Signup.jsx";
 
+// Default route component that redirects based on auth
+function DefaultRoute() {
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (user && user.id) {
+    return <Navigate to="/user/dashboard" replace />;
+  }
+  return <Navigate to="/signin" replace />;
+}
 
 function AppRoutes() {
   const location = useLocation();
@@ -44,10 +51,44 @@ function AppRoutes() {
     "/admin/complaints",
   ].some((path) => location.pathname.startsWith(path));
 
+  // Protect user dashboard and user pages
+  useEffect(() => {
+    const protectedUserRoutes = [
+      "/user/dashboard",
+      "/user/plans",
+      "/user/plans/",
+      "/user/offers",
+      "/user/complaints",
+      "/user/wallet",
+      "/user/profile",
+      "/user/speedtest",
+      "/user/notifications",
+    ];
+    if (
+      protectedUserRoutes.some((path) => location.pathname.startsWith(path))
+    ) {
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (!user || !user.id) {
+        window.location.href = "/signin";
+      }
+    }
+  }, [location]);
+
+  // Redirect authenticated users away from auth pages
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (
+      user &&
+      user.id &&
+      ["/signin", "/signup"].some((path) => location.pathname.startsWith(path))
+    ) {
+      window.location.href = "/user/dashboard";
+    }
+  }, [location]);
 
   // Check if current route is signin or signup
   const isAuthPage = ["/signin", "/signup"].some((path) =>
-    location.pathname.startsWith(path)
+    location.pathname.startsWith(path),
   );
 
   return (
@@ -60,17 +101,20 @@ function AppRoutes() {
         </Routes>
       ) : (
         // All other pages inside Container/Box
-       <Container disableGutters>
-  <Box sx={{ m: 0, p: 0 }}>
+        <Container disableGutters>
+          <Box sx={{ m: 0, p: 0 }}>
             <Routes>
+              {/* Default route */}
+              <Route path="/" element={<DefaultRoute />} />
+
               {/* Auth Pages */}
               <Route path="/signin" element={<Signin />} />
               <Route path="/signup" element={<Signup />} />
 
               {/* User Pages (all protected) */}
-              <Route path="/" element={<Home />} />
+              <Route path="/user/dashboard" element={<Home />} />
               <Route path="/user/plans" element={<UserPlans />} />
-             <Route path="/user/plans/:id" element={<PlanDetails />} />
+              <Route path="/user/plans/:id" element={<PlanDetails />} />
               <Route path="/user/offers" element={<UserOffers />} />
               <Route path="/user/complaints" element={<UserComplaints />} />
               <Route path="/user/wallet" element={<Wallet />} />
@@ -100,7 +144,6 @@ function App() {
         <AppRoutes />
       </Router>
     </AuthProvider>
-   
   );
 }
 

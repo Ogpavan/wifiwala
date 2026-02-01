@@ -1,6 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Gauge, Calendar, Database, Tv, Wifi, Signal, Antenna, Network, Cable } from "lucide-react";
+import {
+  ArrowLeft,
+  Gauge,
+  Calendar,
+  Database,
+  Tv,
+  Wifi,
+  Signal,
+  Antenna,
+  Network,
+  Cable,
+} from "lucide-react";
 
 export default function PlanDetails() {
   const { id } = useParams();
@@ -16,7 +27,7 @@ export default function PlanDetails() {
       return;
     }
 
-    const BASE_URL = import.meta.env.VITE_APP_API_URL;
+    const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
     const fetchPlan = async () => {
       try {
@@ -31,12 +42,15 @@ export default function PlanDetails() {
         setPlan({
           id: planData.plan_id || planData._id,
           provider: planData.name || "Unknown Provider",
-          speed: planData.speed ? planData.speed.replace(/[^0-9]/g, '') : "-",
+          speed: planData.speed ? planData.speed.replace(/[^0-9]/g, "") : "-",
           speedDisplay: planData.speed || "-",
           price: planData.price || "-",
-          validity: planData.duration_days ? `${planData.duration_days} days` : "-",
+          validity: planData.duration_days
+            ? `${planData.duration_days} days`
+            : "-",
           data: planData.data_limit || "Unlimited",
-          description: "High-speed internet connection with reliable performance.",
+          description:
+            "High-speed internet connection with reliable performance.",
           icon: getProviderIcon(planData.name),
           ott: getProviderOTT(planData.name),
         });
@@ -54,11 +68,11 @@ export default function PlanDetails() {
   // Helper function to get provider icon - Now returns Lucide component
   const getProviderIcon = (providerName) => {
     const icons = {
-      'Airtel': Wifi,
-      'Jio': Signal,
-      'BSNL': Antenna,
-      'ACT': Network,
-      'Hathway': Cable
+      Airtel: Wifi,
+      Jio: Signal,
+      BSNL: Antenna,
+      ACT: Network,
+      Hathway: Cable,
     };
     return icons[providerName] || Wifi;
   };
@@ -66,34 +80,34 @@ export default function PlanDetails() {
   // Helper function to get provider OTT platforms
   const getProviderOTT = (providerName) => {
     const ott = {
-      'Airtel': ['Netflix', 'Prime Video', 'Disney+ Hotstar', 'Xstream'],
-      'Jio': ['JioCinema', 'JioTV', 'Voot', 'SonyLIV'],
-      'BSNL': ['Eros Now', 'ShemarooMe'],
-      'ACT': ['ZEE5', 'SonyLIV', 'Voot'],
-      'Hathway': ['Eros Now', 'Hungama Play']
+      Airtel: ["Netflix", "Prime Video", "Disney+ Hotstar", "Xstream"],
+      Jio: ["JioCinema", "JioTV", "Voot", "SonyLIV"],
+      BSNL: ["Eros Now", "ShemarooMe"],
+      ACT: ["ZEE5", "SonyLIV", "Voot"],
+      Hathway: ["Eros Now", "Hungama Play"],
     };
-    return ott[providerName] || ['Netflix', 'Prime Video', 'Hotstar'];
+    return ott[providerName] || ["Netflix", "Prime Video", "Hotstar"];
   };
 
   if (loading) {
     return (
-     <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 flex flex-col items-center justify-center">
-  {/* Spinner */}
-  <div className="w-16 h-16 border-4 border-white border-t-transparent rounded-full animate-spin mb-4"></div>
-  {/* Loading text */}
-  <div className="text-white text-xl font-semibold tracking-wide animate-pulse">
-    Loading...
-  </div>
-</div>
-
-      
+      <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 flex flex-col items-center justify-center">
+        {/* Spinner */}
+        <div className="w-16 h-16 border-4 border-white border-t-transparent rounded-full animate-spin mb-4"></div>
+        {/* Loading text */}
+        <div className="text-white text-xl font-semibold tracking-wide animate-pulse">
+          Loading...
+        </div>
+      </div>
     );
   }
 
   if (error || !plan) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 flex flex-col items-center justify-center p-4">
-        <div className="text-white text-xl mb-4">{error || "Plan not found"}</div>
+        <div className="text-white text-xl mb-4">
+          {error || "Plan not found"}
+        </div>
         <button
           onClick={() => navigate(-1)}
           className="px-4 py-2 bg-blue-900 text-white rounded-lg text-sm"
@@ -163,7 +177,9 @@ export default function PlanDetails() {
         {/* Price */}
         <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-2xl p-3.5 mb-5">
           <div className="flex items-baseline gap-1">
-            <span className="text-2xl font-bold text-blue-900">₹{plan.price}</span>
+            <span className="text-2xl font-bold text-blue-900">
+              ₹{plan.price}
+            </span>
             <span className="text-gray-600 text-xs">/month</span>
           </div>
         </div>
@@ -173,7 +189,9 @@ export default function PlanDetails() {
           <div className="bg-gray-50 rounded-xl p-2.5 text-center">
             <Gauge className="w-4 h-4 text-blue-900 mx-auto mb-1" />
             <p className="text-[10px] text-gray-500 mb-0.5">Speed</p>
-            <p className="text-xs font-bold text-gray-900">{plan.speedDisplay}</p>
+            <p className="text-xs font-bold text-gray-900">
+              {plan.speedDisplay}
+            </p>
           </div>
           <div className="bg-gray-50 rounded-xl p-2.5 text-center">
             <Database className="w-4 h-4 text-blue-900 mx-auto mb-1" />
@@ -234,7 +252,8 @@ export default function PlanDetails() {
         {/* Footer Note */}
         <div className="bg-amber-50 border border-amber-200 rounded-xl p-2.5 mb-5">
           <p className="text-[10px] text-amber-800 leading-relaxed">
-            Available in select areas. Installation charges may apply. OTT subscriptions subject to platform terms.
+            Available in select areas. Installation charges may apply. OTT
+            subscriptions subject to platform terms.
           </p>
         </div>
 

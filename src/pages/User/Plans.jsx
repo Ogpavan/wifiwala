@@ -30,7 +30,7 @@ export default function Plans() {
 
   useEffect(() => {
     // Use environment variable for API URL
-  const BASE_URL = import.meta.env.VITE_APP_API_URL;
+    const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
     fetch(`${BASE_URL}/api/plans`)
       .then((res) => {
@@ -72,18 +72,23 @@ export default function Plans() {
       (provider === "All" || p.provider === provider) &&
       ((p.provider?.toLowerCase() || "").includes(search.toLowerCase()) ||
         (p.speed?.toLowerCase() || "").includes(search.toLowerCase()) ||
-        (p.price?.toString() || "").includes(search.toLowerCase()))
+        (p.price?.toString() || "").includes(search.toLowerCase())),
   );
 
   // Sort plans
   if (sort === "price") filtered.sort((a, b) => a.price - b.price);
-  if (sort === "speed") filtered.sort((a, b) => getSpeedValue(b.speed) - getSpeedValue(a.speed));
-  if (sort === "validity") filtered.sort((a, b) => getValidityValue(b.validity) - getValidityValue(a.validity));
+  if (sort === "speed")
+    filtered.sort((a, b) => getSpeedValue(b.speed) - getSpeedValue(a.speed));
+  if (sort === "validity")
+    filtered.sort(
+      (a, b) => getValidityValue(b.validity) - getValidityValue(a.validity),
+    );
 
   const handleViewMore = (planId) => navigate(`/user/plans/${planId}`);
 
   if (loading) return <div className="text-center py-12">Loading...</div>;
-  if (error) return <div className="text-center py-12 text-red-500">{error}</div>;
+  if (error)
+    return <div className="text-center py-12 text-red-500">{error}</div>;
 
   return (
     <>
@@ -95,7 +100,9 @@ export default function Plans() {
       <div className="min-h-screen bg-white pb-20">
         {/* Header */}
         <div className="px-4 pt-4 pb-3">
-          <h1 className="text-xl font-bold text-gray-900 mb-1">Internet Plans</h1>
+          <h1 className="text-xl font-bold text-gray-900 mb-1">
+            Internet Plans
+          </h1>
           <p className="text-xs text-gray-500">Find the best plan for you</p>
         </div>
 
@@ -138,17 +145,24 @@ export default function Plans() {
         {/* Plans Grid */}
         <div className="px-4 space-y-3">
           {filtered.map((plan) => (
-            <div key={plan.id} className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+            <div
+              key={plan.id}
+              className="bg-white rounded-xl shadow-sm border border-gray-200 p-4"
+            >
               {/* Provider */}
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
                   <i className={`${plan.icon} text-white text-base`}></i>
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-semibold text-sm text-gray-900">{plan.provider || "Unknown Provider"}</h3>
+                  <h3 className="font-semibold text-sm text-gray-900">
+                    {plan.provider || "Unknown Provider"}
+                  </h3>
                 </div>
                 <div className="text-right">
-                  <div className="text-lg font-bold text-blue-600">₹{plan.price}</div>
+                  <div className="text-lg font-bold text-blue-600">
+                    ₹{plan.price}
+                  </div>
                   <div className="text-xs text-gray-500">per month</div>
                 </div>
               </div>
@@ -179,7 +193,9 @@ export default function Plans() {
               <div className="flex gap-2">
                 <button
                   className="flex-1 px-4 py-2 bg-blue-600 text-white text-xs font-medium rounded-xl active:bg-blue-700"
-                  onClick={() => alert(`Interest shown for ${plan.provider} plan`)}
+                  onClick={() =>
+                    alert(`Interest shown for ${plan.provider} plan`)
+                  }
                 >
                   <i className="fa-solid fa-shopping-cart mr-1"></i>
                   Buy Now

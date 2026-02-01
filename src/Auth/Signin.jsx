@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Wifi, Phone, Lock, Eye, EyeOff } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function WiFiSignIn() {
   const [form, setForm] = useState({
@@ -9,6 +10,7 @@ export default function WiFiSignIn() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -40,16 +42,33 @@ export default function WiFiSignIn() {
     return true;
   };
 
-  const handleSignIn = (e) => {
+  const handleSignIn = async (e) => {
     e.preventDefault();
     setError("");
-    
     if (validateForm()) {
       setLoading(true);
-      setTimeout(() => {
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_API_BASE_URL}/api/auth/signin`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(form),
+          },
+        );
+        const data = await response.json();
+        if (data.success) {
+          setLoading(false);
+          localStorage.setItem("user", JSON.stringify(data.user));
+          navigate("/user/dashboard");
+        } else {
+          setLoading(false);
+          setError(data.message || "Signin failed");
+        }
+      } catch (err) {
         setLoading(false);
-        console.log("Sign in successful:", form);
-      }, 1500);
+        setError("Server error. Please try again.");
+      }
     }
   };
 
@@ -118,7 +137,11 @@ export default function WiFiSignIn() {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-blue-900"
                 >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  {showPassword ? (
+                    <EyeOff className="w-4 h-4" />
+                  ) : (
+                    <Eye className="w-4 h-4" />
+                  )}
                 </button>
               </div>
             </div>
@@ -151,7 +174,10 @@ export default function WiFiSignIn() {
           <div className="mt-6 text-center">
             <p className="text-gray-600 text-xs">
               Don't have an account?{" "}
-              <span className="text-blue-900 hover:text-blue-700 font-semibold cursor-pointer">
+              <span
+                className="text-blue-900 hover:text-blue-700 font-semibold cursor-pointer"
+                onClick={() => navigate("/signup")}
+              >
                 Sign Up
               </span>
             </p>
