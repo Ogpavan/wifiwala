@@ -1,28 +1,104 @@
-import React from "react";
-import { Mail, Phone, MapPin, Wifi, User } from "lucide-react";
-import SettingsSidebar from "./Settings.jsx";
+import React, { useState, useEffect } from "react";
+import { Mail, Phone, MapPin, Wifi, User, LogOut } from "lucide-react";
 
 export default function Profile() {
-  const user = {
-    name: "Pawan Pal",
-    email: "pawan.pal@email.com",
-    phone: "+91 98765 43210",
-    avatar: "https://ui-avatars.com/api/?name=Pawan+Pal&background=1e3a8a&color=fff&size=200",
-    joined: "Jan 2024",
-    address: "B-123, Wifi Street, Mumbai, India",
-    activePlan: {
-      name: "Standard Plan",
-      speed: "50Mbps",
-      expiry: "30 Sep 2025",
-    },
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Get user data from localStorage
+    try {
+      const userData = localStorage.getItem("user");
+      if (userData) {
+        const parsedUser = JSON.parse(userData);
+        setUser({
+          name: parsedUser.name || "User Name",
+          email: parsedUser.email || "user@email.com",
+          phone: parsedUser.mobile || "+91 00000 00000",
+          avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(parsedUser.name || "User")}&background=1e3a8a&color=fff&size=200`,
+          joined: "Jan 2024", // Default since not in localStorage
+          address: parsedUser.address || "Address not provided",
+          activePlan: {
+            name: "Standard Plan", // Default plan
+            speed: "50Mbps",
+            expiry: "30 Sep 2025",
+          },
+        });
+      } else {
+        // Fallback user data if localStorage is empty
+        setUser({
+          name: "Guest User",
+          email: "guest@email.com",
+          phone: "+91 00000 00000",
+          avatar:
+            "https://ui-avatars.com/api/?name=Guest+User&background=1e3a8a&color=fff&size=200",
+          joined: "Jan 2024",
+          address: "Address not provided",
+          activePlan: {
+            name: "Standard Plan",
+            speed: "50Mbps",
+            expiry: "30 Sep 2025",
+          },
+        });
+      }
+    } catch (error) {
+      console.error("Error parsing user data from localStorage:", error);
+      // Set fallback user data
+      setUser({
+        name: "Guest User",
+        email: "guest@email.com",
+        phone: "+91 00000 00000",
+        avatar:
+          "https://ui-avatars.com/api/?name=Guest+User&background=1e3a8a&color=fff&size=200",
+        joined: "Jan 2024",
+        address: "Address not provided",
+        activePlan: {
+          name: "Standard Plan",
+          speed: "50Mbps",
+          expiry: "30 Sep 2025",
+        },
+      });
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const handleLogout = () => {
+    // Clear user data from localStorage
+    localStorage.removeItem("user");
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("isAuthenticated");
+
+    // Redirect to home/login page
+    window.location.href = "/";
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block w-8 h-8 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mb-3"></div>
+          <p className="text-gray-600">Loading profile...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-600">Unable to load profile data</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <div className="bg-blue-900 px-6 py-4 flex justify-between items-center">
+      <div className="bg-blue-900 px-6 py-4">
         <h1 className="text-xl font-bold text-white">Profile</h1>
-        <SettingsSidebar />
       </div>
 
       <div className="max-w-md mx-auto px-4 py-6 pb-20">
@@ -44,22 +120,30 @@ export default function Profile() {
         <div className="bg-blue-900 rounded-2xl p-6 mb-6 shadow-lg">
           <div className="flex items-start justify-between mb-4">
             <div className="flex-1">
-              <p className="text-blue-300 text-xs uppercase tracking-wide mb-2">Active Plan</p>
-              <h3 className="text-white text-xl font-bold mb-1">{user.activePlan.name}</h3>
+              <p className="text-blue-300 text-xs uppercase tracking-wide mb-2">
+                Active Plan
+              </p>
+              <h3 className="text-white text-xl font-bold mb-1">
+                {user.activePlan.name}
+              </h3>
               <div className="flex items-center gap-2 text-blue-200">
                 <Wifi className="w-4 h-4" />
-                <span className="text-lg font-semibold">{user.activePlan.speed}</span>
+                <span className="text-lg font-semibold">
+                  {user.activePlan.speed}
+                </span>
               </div>
             </div>
             <div className="bg-blue-800 p-3 rounded-xl">
               <Wifi className="w-6 h-6 text-white" />
             </div>
           </div>
-          
+
           <div className="flex items-center justify-between pt-4 border-t border-blue-800">
             <div>
               <p className="text-blue-300 text-xs mb-1">Valid till</p>
-              <p className="text-white font-medium text-sm">{user.activePlan.expiry}</p>
+              <p className="text-white font-medium text-sm">
+                {user.activePlan.expiry}
+              </p>
             </div>
             <button className="px-4 py-2 bg-white text-blue-900 text-sm font-semibold rounded-lg hover:bg-blue-50 transition-colors">
               Renew / Upgrade
@@ -69,8 +153,10 @@ export default function Profile() {
 
         {/* Personal Details */}
         <div className="bg-gray-50 rounded-2xl p-6">
-          <h3 className="text-lg font-bold text-gray-900 mb-4">Personal Details</h3>
-          
+          <h3 className="text-lg font-bold text-gray-900 mb-4">
+            Personal Details
+          </h3>
+
           <div className="space-y-4">
             <div className="flex items-start gap-3">
               <div className="p-2 bg-blue-100 rounded-lg">
@@ -112,6 +198,17 @@ export default function Profile() {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Logout Button */}
+        <div className="mt-6">
+          <button
+            onClick={handleLogout}
+            className="w-full bg-red-600 text-white font-semibold py-3 px-4 rounded-xl hover:bg-red-700 transition-colors flex items-center justify-center gap-2"
+          >
+            <LogOut className="w-5 h-5" />
+            Logout
+          </button>
         </div>
       </div>
     </div>
