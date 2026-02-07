@@ -23,9 +23,11 @@ import AdminPlans from "./pages/Admin/Plans";
 import AdminOffers from "./pages/Admin/Offers";
 import AdminComplaints from "./pages/Admin/Complaints";
 import Profile from "./pages/User/Profile";
-import Speedtest from "./pages/User/Speedtest";
+import Speedtest from "./pages/User/VipPlan";
 import Notification from "./pages/User/Notification";
 import { AuthProvider } from "./context/AuthContext.jsx";
+import VipDetails from "./pages/User/VipDetails.jsx";
+
 
 import Signin from "./Auth/Signin.jsx";
 import Signup from "./Auth/Signup.jsx";
@@ -121,6 +123,8 @@ function AppRoutes() {
               <Route path="/user/profile" element={<Profile />} />
               <Route path="/user/speedtest" element={<Speedtest />} />
               <Route path="/user/notifications" element={<Notification />} />
+              <Route path="/user/vipdetails/:id" element={<VipDetails />} />
+
 
               {/* Admin Pages (if you want to protect them too) */}
               <Route path="/admin/dashboard" element={<Dashboard />} />

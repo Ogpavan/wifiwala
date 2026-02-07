@@ -14,7 +14,7 @@ const navItems = [
   { label: "Plans", icon: faListAlt, path: "/user/plans" },
   { label: "wifi", icon: faWifi, path: "/user/speedtest", center: true },
   { label: "Offers", icon: faTags, path: "/user/offers" },
-  { label: "Help", icon: faTriangleExclamation, path: "/user/complaints" },
+  { label: "Services", icon: faTriangleExclamation, path: "/user/complaints" },
 ];
 
 export default function BottomFooter() {
